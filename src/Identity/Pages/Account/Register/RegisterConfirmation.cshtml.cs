@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace DotNetFlix.Identity.Areas.Identity.Pages.Account
+namespace DotNetFlix.Identity.Pages.Account.Register
 {
     [AllowAnonymous]
     public class RegisterConfirmationModel : PageModel

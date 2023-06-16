@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Duende.IdentityServer.Models;
+using DotNetFlix.Identity.Services;
+using Microsoft.AspNetCore.Identity.UI.Services;
 
 namespace DotNetFlix.Identity;
 
@@ -51,6 +53,8 @@ internal static class HostingExtensions
                 options.ClientId = "copy client ID from Google here";
                 options.ClientSecret = "copy client secret from Google here";
             });
+
+        builder.Services.AddScoped<IEmailSender, EmailService>();
 
         return builder.Build();
     }
