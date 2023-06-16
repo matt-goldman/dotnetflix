@@ -1,4 +1,5 @@
 ﻿using Duende.IdentityServer.Models;
+using IdentityModel;
 
 namespace DotNetFlix.Identity;
 
@@ -9,13 +10,44 @@ public static class Config
         {
             new IdentityResources.OpenId(),
             new IdentityResources.Profile(),
+            new IdentityResources.Email()
         };
 
     public static IEnumerable<ApiScope> ApiScopes =>
         new ApiScope[]
         {
-            new ApiScope("scope1"),
-            new ApiScope("scope2"),
+            new ApiScope("videos-api", "Videos API"),
+            new ApiScope("subscriptions-api", "Subscriptions API")
+        };
+
+    public static IEnumerable<ApiResource> ApiResources =>
+        new ApiResource[]
+        {
+            new ApiResource("VideosApi", "Videos API")
+            {
+                Scopes = { "videos-api", JwtClaimTypes.Email, "profile" },
+
+                UserClaims =
+                {
+                    JwtClaimTypes.Email,
+                    JwtClaimTypes.Profile,
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName
+                }
+            },
+            
+            new ApiResource("SubscriptionsApi", "Subscriptions API")
+            {
+                Scopes = { "subscriptions-api", JwtClaimTypes.Email, "profile" },
+
+                UserClaims =
+                {
+                    JwtClaimTypes.Email,
+                    JwtClaimTypes.Profile,
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName
+                }
+            }
         };
 
     public static IEnumerable<Client> Clients =>

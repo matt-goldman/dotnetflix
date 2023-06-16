@@ -4,6 +4,7 @@ using DotNetFlix.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Duende.IdentityServer.Models;
 
 namespace DotNetFlix.Identity;
 
@@ -20,6 +21,8 @@ internal static class HostingExtensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
+        List<Client> clients = builder.Configuration.GetSection("Clients").Get<List<Client>>();
+
         builder.Services
             .AddIdentityServer(options =>
             {
@@ -33,14 +36,15 @@ internal static class HostingExtensions
             })
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
-            .AddInMemoryClients(Config.Clients)
+            .AddInMemoryApiResources(Config.ApiResources)
+            .AddInMemoryClients(clients)
             .AddAspNetIdentity<ApplicationUser>();
         
         builder.Services.AddAuthentication()
             .AddGoogle(options =>
             {
                 options.SignInScheme = IdentityServerConstants.ExternalCookieAuthenticationScheme;
-
+                
                 // register your IdentityServer with Google at https://console.developers.google.com
                 // enable the Google+ API
                 // set the redirect URI to https://localhost:5001/signin-google

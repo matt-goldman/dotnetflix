@@ -2,34 +2,32 @@
 @model DotNetFlix.Identity.Pages.Login.Index
 
 <div class="login-page">
-    <div class="lead">
-        <h1>Login</h1>
-        <p>Choose how to login</p>
-    </div>
 
     <partial name="_ValidationSummary" />
+    <div class="row m-4">
+        <div class="col-8">
+            <img src="/dnf_logo.png" class="img-fluid"/>
+        </div>
+    </div>
 
     <div class="row">
 
         @if (Model.View.EnableLocalLogin)
         {
             <div class="col-sm-6">
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Local Account</h2>
-                    </div>
+                <div class="card acrylic position-relative-md top-50 start-50-md">
 
                     <div class="card-body">
                         <form asp-page="/Account/Login/Index">
                             <input type="hidden" asp-for="Input.ReturnUrl" />
 
-                            <div class="form-group">
+                            <div class="form-group mt-2">
                                 <label asp-for="Input.Username"></label>
-                                <input class="form-control" placeholder="Username" asp-for="Input.Username" autofocus>
+                                <input class="form-control acrylic-dark" placeholder="Username" asp-for="Input.Username" autofocus>
                             </div>
-                            <div class="form-group">
+                            <div class="form-group mt-4">
                                 <label asp-for="Input.Password"></label>
-                                <input type="password" class="form-control" placeholder="Password" asp-for="Input.Password" autocomplete="off">
+                                <input type="password" class="form-control acrylic-dark" placeholder="Password" asp-for="Input.Password" autocomplete="off">
                             </div>
                             
                             @if (Model.View.AllowRememberLogin)
@@ -44,14 +42,14 @@
                                 </div>
                             }
                             
-                            <button class="btn btn-primary" name="Input.Button" value="login">Login</button>
-                            <button class="btn btn-secondary" name="Input.Button" value="cancel">Cancel</button>
+                            <button class="btn btn-primary m-2 mt-5" name="Input.Button" value="login">Login</button>
+                            <button class="btn btn-secondary m-2 mt-5" name="Input.Button" value="cancel">Cancel</button>
                         </form>
                     </div>
                 </div>
             </div>
         }
-
+@*
         @if (Model.View.VisibleExternalProviders.Any())
         {
             <div class="col-sm-6">
@@ -76,7 +74,7 @@
                     </div>
                 </div>
             </div>
-        }
+        }*@
 
         @if (!Model.View.EnableLocalLogin && !Model.View.VisibleExternalProviders.Any())
         {

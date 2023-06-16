@@ -1,4 +1,4 @@
-namespace DotNetFlix.API;
+namespace DotNetFlix.Shared;
 
 public class WeatherForecast
 {

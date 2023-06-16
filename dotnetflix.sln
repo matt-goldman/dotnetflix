@@ -5,19 +5,20 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CD226D3E-A1D6-4950-B538-5DF144798042}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.API", "src\API\DotNetFlix.API.csproj", "{12AA768A-08FF-4F14-B32F-2A19979E24F8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.API", "src\API\DotNetFlix.API.csproj", "{12AA768A-08FF-4F14-B32F-2A19979E24F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.Identity", "src\Identity\DotNetFlix.Identity.csproj", "{0061E0E9-3990-4FB6-A9E5-2AC941FA5F43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.Identity", "src\Identity\DotNetFlix.Identity.csproj", "{0061E0E9-3990-4FB6-A9E5-2AC941FA5F43}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.UI", "src\UI\DotNetFlix.UI.csproj", "{53878C99-DFC1-496B-8E76-332B4DDD9086}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.UI", "src\UI\DotNetFlix.UI.csproj", "{53878C99-DFC1-496B-8E76-332B4DDD9086}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "src\WebUI\WebUI.csproj", "{9F526FAA-5EE6-44FD-833E-780945367384}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.Shared", "src\Shared\DotNetFlix.Shared.csproj", "{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{12AA768A-08FF-4F14-B32F-2A19979E24F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -32,10 +33,26 @@ Global
 		{53878C99-DFC1-496B-8E76-332B4DDD9086}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{53878C99-DFC1-496B-8E76-332B4DDD9086}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{53878C99-DFC1-496B-8E76-332B4DDD9086}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F526FAA-5EE6-44FD-833E-780945367384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F526FAA-5EE6-44FD-833E-780945367384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F526FAA-5EE6-44FD-833E-780945367384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F526FAA-5EE6-44FD-833E-780945367384}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{12AA768A-08FF-4F14-B32F-2A19979E24F8} = {CD226D3E-A1D6-4950-B538-5DF144798042}
 		{0061E0E9-3990-4FB6-A9E5-2AC941FA5F43} = {CD226D3E-A1D6-4950-B538-5DF144798042}
 		{53878C99-DFC1-496B-8E76-332B4DDD9086} = {CD226D3E-A1D6-4950-B538-5DF144798042}
+		{9F526FAA-5EE6-44FD-833E-780945367384} = {CD226D3E-A1D6-4950-B538-5DF144798042}
+		{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7} = {CD226D3E-A1D6-4950-B538-5DF144798042}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {8898B9A4-AE6F-4DBD-92F3-BF0F553475BC}
 	EndGlobalSection
 EndGlobal

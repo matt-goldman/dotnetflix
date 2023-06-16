@@ -1,3 +1,4 @@
+using DotNetFlix.Shared;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DotNetFlix.API.Controllers;
