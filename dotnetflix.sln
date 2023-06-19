@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.Identity", "src\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.UI", "src\UI\DotNetFlix.UI.csproj", "{53878C99-DFC1-496B-8E76-332B4DDD9086}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebUI", "src\WebUI\WebUI.csproj", "{9F526FAA-5EE6-44FD-833E-780945367384}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebUI", "src\WebUI\WebUI.csproj", "{9F526FAA-5EE6-44FD-833E-780945367384}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.Shared", "src\Shared\DotNetFlix.Shared.csproj", "{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.Shared", "src\Shared\DotNetFlix.Shared.csproj", "{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
