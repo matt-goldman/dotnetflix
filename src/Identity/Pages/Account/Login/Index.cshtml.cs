@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Security.Policy;
+using System.Web;
 
 namespace DotNetFlix.Identity.Pages.Login;
 
@@ -26,7 +28,9 @@ public class Index : PageModel
         
     [BindProperty]
     public InputModel Input { get; set; }
-        
+
+    public string OriginalRedirectUri { get; set; }
+
     public Index(
         IIdentityServerInteractionService interaction,
         IAuthenticationSchemeProvider schemeProvider,
@@ -140,7 +144,11 @@ public class Index : PageModel
         {
             ReturnUrl = returnUrl
         };
-            
+
+        int idx = returnUrl.IndexOf('?');
+        string query = idx >= 0 ? returnUrl.Substring(idx) : "";
+        OriginalRedirectUri = HttpUtility.ParseQueryString(query).Get("redirect_uri");
+
         var context = await _interaction.GetAuthorizationContextAsync(returnUrl);
         if (context?.IdP != null && await _schemeProvider.GetSchemeAsync(context.IdP) != null)
         {
