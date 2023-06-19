@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
-using WebUI;
-using static System.Formats.Asn1.AsnWriter;
+using WebUI.Helpers;
 
 namespace WebUI
 {
@@ -13,7 +12,10 @@ namespace WebUI
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
+            builder.Services.AddSingleton<AuthHandler>();
+            
+            builder.Services.AddHttpClient(AuthHandler.AuthenticatedClient, cfg => cfg.BaseAddress = new Uri("https://localhost:7132/"))
+                .AddHttpMessageHandler((s) => s.GetService<AuthHandler>());
 
             builder.Services.AddOidcAuthentication(options =>
             {
@@ -21,7 +23,7 @@ namespace WebUI
                 // For more information, see https://aka.ms/blazor-standalone-auth
                 builder.Configuration.Bind("Local", options.ProviderOptions);
 
-                options.ProviderOptions.DefaultScopes.Add("videos-api");
+                options.ProviderOptions.DefaultScopes.Add("dotnetflix-api");
 
                 options.ProviderOptions.ResponseType = "code";
             });

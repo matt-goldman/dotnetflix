@@ -1,6 +1,7 @@
 ﻿@page "/fetchdata"
 @using DotNetFlix.Shared;
-@inject HttpClient Http
+@using WebUI.Helpers;
+@inject IHttpClientFactory clientFactory
 
 <PageTitle>Weather forecast</PageTitle>
 
@@ -40,8 +41,12 @@ else
 @code {
     private WeatherForecast[]? forecasts;
 
+    private HttpClient client;
+
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
+        client = clientFactory.CreateClient(AuthHandler.AuthenticatedClient);
+        
+        forecasts = await client.GetFromJsonAsync<WeatherForecast[]>("weatherforecast");
     }
 }

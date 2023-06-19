@@ -17,7 +17,8 @@ public static class Config
         new ApiScope[]
         {
             new ApiScope("videos-api", "Videos API"),
-            new ApiScope("subscriptions-api", "Subscriptions API")
+            new ApiScope("subscriptions-api", "Subscriptions API"),
+            new ApiScope("dotnetflix-api", "DotNetFlix API")
         };
 
     public static IEnumerable<ApiResource> ApiResources =>
@@ -39,6 +40,19 @@ public static class Config
             new ApiResource("SubscriptionsApi", "Subscriptions API")
             {
                 Scopes = { "subscriptions-api", JwtClaimTypes.Email, "profile" },
+
+                UserClaims =
+                {
+                    JwtClaimTypes.Email,
+                    JwtClaimTypes.Profile,
+                    JwtClaimTypes.GivenName,
+                    JwtClaimTypes.FamilyName
+                }
+            },
+
+            new ApiResource("DotnetflixApi", "DotNetFlix API")
+            {
+                Scopes = { "dotnetflix-api", JwtClaimTypes.Email, "profile" },
 
                 UserClaims =
                 {
@@ -78,7 +92,7 @@ public static class Config
                 PostLogoutRedirectUris = { "https://localhost:44300/signout-callback-oidc" },
 
                 AllowOfflineAccess = true,
-                AllowedScopes = { "openid", "profile", "scope2" }
+                AllowedScopes = { "openid", "profile", "dotnetflix-api" }
             },
         };
 }

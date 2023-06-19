@@ -1,7 +1,27 @@
 ﻿@page "/authentication/{action}"
+@inject IAccessTokenProvider tokenProvider
+@inject NavigationManager navigation
 @using Microsoft.AspNetCore.Components.WebAssembly.Authentication
-<RemoteAuthenticatorView Action="@Action" />
+@using WebUI.Helpers;
+<RemoteAuthenticatorView Action="@Action" OnLogInSucceeded="HandleLoginSucceeded" />
 
 @code{
     [Parameter] public string? Action { get; set; }
+
+    public async void HandleLoginSucceeded()
+    {
+        var tokenResult = await tokenProvider.RequestAccessToken();
+
+        Console.WriteLine("[AuthenticaotrView] Got Token");
+
+        if (tokenResult.TryGetToken(out var token))
+        {
+            Console.WriteLine($"[AuthenticaotrView] Token: {token.Value}");
+            AuthHandler.SetAccessToken(token.Value);
+        }
+        else
+        {
+            Console.WriteLine("No token");
+        }
+    }
 }
