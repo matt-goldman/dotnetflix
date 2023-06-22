@@ -1,3 +1,5 @@
+using DotNetFlix.VideoService;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +8,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthentication().AddJwtBearer();
 builder.Services.AddAuthorization();
+builder.Services.AddSingleton<YouTubeVideosService>();
 
 var app = builder.Build();
 
@@ -37,6 +40,24 @@ app.MapGet("/weatherforecast", () =>
 })
 .RequireAuthorization()
 .WithName("GetWeatherForecast")
+.WithOpenApi();
+
+app.MapGet("/playlists", async (YouTubeVideosService service) =>
+{
+    var result = await service.GetPlayLists();
+    return result;
+})
+.RequireAuthorization()
+.WithName("Playlists")
+.WithOpenApi();
+
+app.MapGet("/playlists/{id}/videos", async (string id, YouTubeVideosService service) =>
+{
+    var result = await service.GetPlaylistVideos(id);
+    return result;
+})
+.RequireAuthorization()
+.WithName("Videos")
 .WithOpenApi();
 
 app.Run();
