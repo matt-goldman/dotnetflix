@@ -17,9 +17,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.Shared", "src\Sh
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{6EBF3CA2-EBF1-4F07-ADB3-A37B839F4FF7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.SubscriptionService", "src\DotNetFlix.SubscriptionService\DotNetFlix.SubscriptionService.csproj", "{125A7881-BE9E-4D40-9B32-7BAF227A87A7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.SubscriptionService", "src\DotNetFlix.SubscriptionService\DotNetFlix.SubscriptionService.csproj", "{125A7881-BE9E-4D40-9B32-7BAF227A87A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DotNetFlix.VideoService", "src\DotNetFlix.VideoService\DotNetFlix.VideoService.csproj", "{3DF38F28-38BE-4933-A629-425B518427F2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.VideoService", "src\DotNetFlix.VideoService\DotNetFlix.VideoService.csproj", "{3DF38F28-38BE-4933-A629-425B518427F2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Test App", "src\YouTube Test App\YouTube Test App.csproj", "{B941AE30-6106-43BC-8E57-FF830ECBE91F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{3DF38F28-38BE-4933-A629-425B518427F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3DF38F28-38BE-4933-A629-425B518427F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3DF38F28-38BE-4933-A629-425B518427F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B941AE30-6106-43BC-8E57-FF830ECBE91F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B941AE30-6106-43BC-8E57-FF830ECBE91F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B941AE30-6106-43BC-8E57-FF830ECBE91F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B941AE30-6106-43BC-8E57-FF830ECBE91F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -67,6 +73,7 @@ Global
 		{A3B7D1C4-70E6-4865-A7ED-BA1344C814F7} = {CD226D3E-A1D6-4950-B538-5DF144798042}
 		{125A7881-BE9E-4D40-9B32-7BAF227A87A7} = {CD226D3E-A1D6-4950-B538-5DF144798042}
 		{3DF38F28-38BE-4933-A629-425B518427F2} = {CD226D3E-A1D6-4950-B538-5DF144798042}
+		{B941AE30-6106-43BC-8E57-FF830ECBE91F} = {6EBF3CA2-EBF1-4F07-ADB3-A37B839F4FF7}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8898B9A4-AE6F-4DBD-92F3-BF0F553475BC}
