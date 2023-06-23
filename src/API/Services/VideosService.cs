@@ -1,5 +1,5 @@
 ﻿namespace DotNetFlix.API.Services;
 
-public class VideossService
+public class VideosService
 {
 }

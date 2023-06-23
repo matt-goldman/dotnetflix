@@ -1,3 +1,5 @@
+using DotNetFlix.API.Services;
+using DotNetFlix.API.Services.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,6 +20,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Audience = "DotnetflixApi";
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
     });
+
+builder.Services.AddHttpClient(BaseService.IdentityClient, client => client.BaseAddress = new Uri(authority));
+
+builder.Services.Configure<ServiceConfig>(builder.Configuration);
 
 builder.Services.AddCors(opt =>
 {
