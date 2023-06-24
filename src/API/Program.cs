@@ -1,3 +1,4 @@
+using DotNetFlix.API.Helpers;
 using DotNetFlix.API.Services;
 using DotNetFlix.API.Services.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -21,17 +22,21 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
     });
 
-builder.Services.AddSingleton<SubscriptionsService>();
-builder.Services.AddSingleton<VideosService>();
+builder.Services.AddScoped<SubscriptionsService>();
+builder.Services.AddScoped<VideosService>();
 
 var serviceOptions = builder.Configuration.Get<ServiceConfig>()!;
 builder.Services.AddSingleton(serviceOptions);
 
-builder.Services.AddHttpClient(BaseService.IdentityClient, client => client.BaseAddress = new Uri(authority));
+builder.Services.AddSingleton<TokenHandler>();
 
-builder.Services.AddHttpClient(SubscriptionsService.SubscriptionsClient, client => client.BaseAddress = new Uri(serviceOptions.SubscriptionsClient.BaseUrl));
+builder.Services.AddHttpClient(TokenHandler.IdentityClient, client => client.BaseAddress = new Uri(authority));
 
-builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri(serviceOptions.VideosClient.BaseUrl));
+builder.Services.AddHttpClient(SubscriptionsService.SubscriptionsClient, client => client.BaseAddress = new Uri(serviceOptions.SubscriptionsClient.BaseUrl))
+    .AddHttpMessageHandler((s) => s.GetService<TokenHandler>());
+
+builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri(serviceOptions.VideosClient.BaseUrl))
+    .AddHttpMessageHandler((s) => s.GetService<TokenHandler>());
 
 
 builder.Services.AddCors(opt =>

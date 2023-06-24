@@ -1,23 +1,20 @@
-﻿using DotNetFlix.API.Services.Models;
-using Microsoft.Extensions.Options;
+﻿namespace DotNetFlix.API.Services;
 
-namespace DotNetFlix.API.Services;
-
-public class SubscriptionsService : BaseService
+public class SubscriptionsService
 {
     public const string SubscriptionsClient = nameof(SubscriptionsClient);
-    
-    private readonly ClientCredentials _clientCredentials;
 
-    private DateTime _tokenExpires = DateTime.UtcNow;
-    
-    public SubscriptionsService(IHttpClientFactory httpClientFactory, IOptions<ServiceConfig> config) : base(httpClientFactory)
+    private readonly HttpClient _subscriptionsClient;
+
+    public SubscriptionsService(IHttpClientFactory httpClientFactory)
     {
-        _clientCredentials = config.Value.SubscriptionsClient;
+        _subscriptionsClient = httpClientFactory.CreateClient(SubscriptionsClient);
     }
 
     public async Task<bool> SubscriberIsPremium(string subscriberName)
     {
-        return await Task.FromResult(true);
+        var isPremium = await _subscriptionsClient.GetFromJsonAsync<bool>($"subscriptions/{subscriberName}");
+
+        return isPremium;
     }
 }
