@@ -11,4 +11,6 @@ public class VideoDto
     public string ThumbnailUrl { get; set; } = string.Empty;
 
     public bool IsPremium { get; set; }
+
+    public bool IsRestricted { get; set; }
 }

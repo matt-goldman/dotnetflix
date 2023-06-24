@@ -21,9 +21,18 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
     });
 
+builder.Services.AddSingleton<SubscriptionsService>();
+builder.Services.AddSingleton<VideosService>();
+
+var serviceOptions = builder.Configuration.Get<ServiceConfig>()!;
+builder.Services.AddSingleton(serviceOptions);
+
 builder.Services.AddHttpClient(BaseService.IdentityClient, client => client.BaseAddress = new Uri(authority));
 
-builder.Services.Configure<ServiceConfig>(builder.Configuration);
+builder.Services.AddHttpClient(SubscriptionsService.SubscriptionsClient, client => client.BaseAddress = new Uri(serviceOptions.SubscriptionsClient.BaseUrl));
+
+builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri(serviceOptions.VideosClient.BaseUrl));
+
 
 builder.Services.AddCors(opt =>
 {
