@@ -35,7 +35,7 @@ public class TokenHandler : DelegatingHandler
     {
         var token = string.Empty;
         
-        if (request.RequestUri!.Host == _videosUri.Host)
+        if (request.RequestUri!.Host == _videosUri.Host && request.RequestUri!.Port == _videosUri.Port)
         {
             if (string.IsNullOrEmpty(_videosToken) || _videosTokenExpires < DateTime.UtcNow.AddMinutes(1))
             {
@@ -46,7 +46,7 @@ public class TokenHandler : DelegatingHandler
 
             token = _videosToken;
         }
-        else if (request.RequestUri.Host == _subscriptionsUri.Host)
+        else if (request.RequestUri.Host == _subscriptionsUri.Host && request.RequestUri.Port == _subscriptionsUri.Port)
         {
             if (string.IsNullOrEmpty(_subscriptionsToken) || _subscriptionsTokenExpires < DateTime.UtcNow.AddMinutes(1))
             {

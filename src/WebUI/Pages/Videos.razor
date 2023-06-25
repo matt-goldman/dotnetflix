@@ -1,16 +1,13 @@
-﻿@page "/videos"
+﻿@page "/videos/{PlaylistName}/{PlaylistId}"
 @using DotNetFlix.Shared;
 @using WebUI.Helpers;
 @inject IHttpClientFactory clientFactory
 
 <PageTitle>Videos</PageTitle>
 
-<h1>Videos</h1>
+<h1>@PlaylistName</h1>
 
-<p>This component demonstrates fetching videos from the API.</p>
-<P>Click on a playlist to get its videos</P>
-
-@if (playlists == null)
+@if (videos == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -21,14 +18,20 @@ else
             <tr>
                 <th>Title</th>
                 <th>Description</th>
+                <th>Thumbnail</th>
+                <th>Premium</th>
+                <th>Restricted</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var playlist in playlists)
+            @foreach (var video in videos)
             {
                 <tr>
-                    <td>@playlist.Title</td>
-                    <td>@playlist.Description</td>
+                    <td>@video.Title</td>
+                    <td>@video.Description</td>
+                    <td><img src="@video.ThumbnailUrl" /></td>
+                    <td>@video.IsPremium</td>
+                    <td>@video.IsRestricted</td>
                 </tr>
             }
         </tbody>
@@ -36,7 +39,14 @@ else
 }
 
 @code {
-    private PlaylistDto[]? playlists;
+
+    [Parameter]
+    public string PlaylistId { get; set; }
+
+    [Parameter]
+    public string PlaylistName { get; set; }
+    
+    private VideoDto[]? videos;
 
     private HttpClient client;
 
@@ -44,7 +54,7 @@ else
     {
         client = clientFactory.CreateClient(AuthHandler.AuthenticatedClient);
         
-        playlists = await client.GetFromJsonAsync<PlaylistDto[]>("Videos/playlists");
+        videos = await client.GetFromJsonAsync<VideoDto[]>($"Videos/playlists/{PlaylistId}");
     }
 }
 

@@ -13,8 +13,10 @@ public class SubscriptionsService
 
     public async Task<bool> SubscriberIsPremium(string subscriberName)
     {
-        var isPremium = await _subscriptionsClient.GetFromJsonAsync<bool>($"subscriptions/{subscriberName}");
+        var subscription = await _subscriptionsClient.GetFromJsonAsync<Subscription>($"subscription?subscriberName={subscriberName}");
 
-        return isPremium;
+        return subscription.isPremium;
     }
 }
+
+internal record Subscription(string subscriberName, bool isPremium);
