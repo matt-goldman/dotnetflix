@@ -18,7 +18,7 @@ public class VideosController : ControllerBase
         _videosService = videosService;
     }
 
-    [HttpGet("videos/playlists/{playlistId}")]
+    [HttpGet("playlists/{playlistId}")]
     public async Task<List<VideoDto>> Get(string playlistID)
     {
         var username = User.FindFirstValue(ClaimTypes.Email)!;
@@ -28,7 +28,7 @@ public class VideosController : ControllerBase
         return videos;
     }
 
-    [HttpGet("videos/playlists")]
+    [HttpGet("playlists")]
     public async Task<List<PlaylistDto>> GetPlaylists()
     {
         var playlists = await _videosService.GetPlaylists();

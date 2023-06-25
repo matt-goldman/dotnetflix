@@ -47,6 +47,14 @@ else
     {
         client = clientFactory.CreateClient(AuthHandler.AuthenticatedClient);
         
-        forecasts = await client.GetFromJsonAsync<WeatherForecast[]>("weatherforecast");
+        try
+        {
+            forecasts = await client.GetFromJsonAsync<WeatherForecast[]>("weatherforecast");
+        }
+        catch (Exception ex)
+        {
+            
+            throw;
+        }
     }
 }

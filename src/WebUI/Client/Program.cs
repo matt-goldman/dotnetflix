@@ -12,7 +12,7 @@ namespace WebUI
             builder.RootComponents.Add<App>("#app");
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
-            builder.Services.AddSingleton<AuthHandler>();
+            builder.Services.AddScoped<AuthHandler>();
             
             builder.Services.AddHttpClient(AuthHandler.AuthenticatedClient, cfg => cfg.BaseAddress = new Uri("https://localhost:7132/"))
                 .AddHttpMessageHandler((s) => s.GetService<AuthHandler>());
