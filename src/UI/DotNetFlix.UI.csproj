@@ -56,4 +56,8 @@
 		<PackageReference Include="ZXing.Net.Maui.Controls" Version="0.3.0-preview.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\Shared\DotNetFlix.Shared.csproj" />
+	</ItemGroup>
+
 </Project>

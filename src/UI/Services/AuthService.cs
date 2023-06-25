@@ -1,104 +1,117 @@
-﻿using System.Diagnostics;
-using System.Net.Http.Json;
+﻿using System.Net.Http.Json;
 
 namespace DotNetFlix.UI.Services;
 
 public class AuthService
 {
-    const string ClientId = "device";/*maui-b2c "daea0fc2-c44f-422e-af7e-07b51237668d";*/ // goldienote - "5b3ae15d-0f8f-4f2e-85bd-72baee779aa3";//will - "68f5b5ac-7d8a-4537-9145-cf599e2f74b7";
-
     private readonly HttpClient _httpClient;
 
     private string _deviceCode;
+    private DateTime _deviceCodeExpires = DateTime.UtcNow;
 
-    public AuthService(IHttpClientFactory clientFactory)
+    public AuthSettings _authSettings { get; }
+
+    private TokenResponse _currentToken;
+    private DateTime _tokenExpiresAt = DateTime.UtcNow;
+
+    private readonly HttpRequestMessage _tokenRequest;
+
+    private readonly HttpRequestMessage _codeRequest;
+
+    public AuthService(IHttpClientFactory clientFactory, AuthSettings authSettings)
     {
         _httpClient = clientFactory.CreateClient();
+        _authSettings = authSettings;
+
+        _tokenRequest = GenerateTokenRequest();
+        _codeRequest = GenerateCodeRequest();
     }
 
-    public async Task<DeviceCodeResponse> GetUserCode()
+    private HttpRequestMessage GenerateTokenRequest()
     {
-        var request = new HttpRequestMessage(HttpMethod.Post, "https://dc02-159-196-124-207.ngrok.io/connect/deviceauthorization");//"https://login.microsoftonline.com/common/oauth2/v2.0/devicecode");
+        // Generate a new token request
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{_authSettings.BaseUrl}{_authSettings.TokenEndpoint}");
         var content = new FormUrlEncodedContent(new[]
         {
-            new KeyValuePair<string, string>("client_id", ClientId),
-            new KeyValuePair<string, string>("scope", "scope2 profile openid")
+            new KeyValuePair<string, string>("client_id", _authSettings.ClientId),
+            new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
+            new KeyValuePair<string, string>("device_code", _deviceCode)
         });
 
         request.Content = content;
 
-        var response = await _httpClient.SendAsync(request);
+        return request;
+    }
+
+    private HttpRequestMessage GenerateCodeRequest()
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"{_authSettings.BaseUrl}{_authSettings.DeviceCodeEndpoint}");
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string, string>("client_id", _authSettings.ClientId),
+            new KeyValuePair<string, string>("scope", _authSettings.Scopes)
+        });
+
+        request.Content = content;
+
+        return request;
+    }
+
+    public async Task<DeviceCodeResponse> GetUserCode()
+    {
+        var response = await _httpClient.SendAsync(_codeRequest);
 
         var deviceCodeResponse = await response.Content.ReadFromJsonAsync<DeviceCodeResponse>();
 
         _deviceCode = deviceCodeResponse.device_code;
+        _deviceCodeExpires = DateTime.UtcNow.AddSeconds(deviceCodeResponse.expires_in);
 
         return deviceCodeResponse;
     }
 
     public async Task<TokenResponse> GetToken()
     {
-
-
-        var stopwatch = new Stopwatch();
-
-        stopwatch.Start();
-
-        var request = new HttpRequestMessage(HttpMethod.Post, "https://dc02-159-196-124-207.ngrok.io/connect/token"); //"https://login.microsoftonline.com/common/oauth2/v2.0/token");
-        var content = new FormUrlEncodedContent(new[]
+        // Check to see if the current token is still valid
+        if (_currentToken != null || _tokenExpiresAt > DateTime.UtcNow.AddMinutes(1))
         {
-                new KeyValuePair<string, string>("client_id", ClientId),
-                new KeyValuePair<string, string>("grant_type", "urn:ietf:params:oauth:grant-type:device_code"),
-                new KeyValuePair<string, string>("device_code", _deviceCode)
-            });
-
-        request.Content = content;
-
-        while (stopwatch.ElapsedMilliseconds < 900000) // 900000ms is 15 minutes which is the max validity for the user code
+            return _currentToken;
+        }
+        
+        while (DateTime.UtcNow < _deviceCodeExpires)
         {
-            var response = await _httpClient.SendAsync(request);
+            var response = await _httpClient.SendAsync(_tokenRequest);
 
             if (response.IsSuccessStatusCode)
             {
-                try
-                {
-                    var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
-                    stopwatch.Stop();
+                var tokenResponse = await response.Content.ReadFromJsonAsync<TokenResponse>();
 
-                    return tokenResponse;
-                }
-                catch (Exception ex)
-                {
-                    // If the response is not a successful response, it will throw a JsonException
-                    // We can ignore this exception and continue polling for the token
-                    throw;
-                }
+                _currentToken = tokenResponse;
+                _tokenExpiresAt = DateTime.UtcNow.AddSeconds(tokenResponse.expires_in);
+
+                // Mark the device code as expired
+                _deviceCodeExpires = DateTime.UtcNow.AddSeconds(-100);
+
+                return tokenResponse;
             }
             else
             {
-                try
-                {
-                    var tokenRespnse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
+                var tokenRespnse = await response.Content.ReadFromJsonAsync<ErrorResponse>();
 
-                    if (tokenRespnse.error == "authorization_pending")
-                    {
-                        await Task.Delay(5000);
-                        continue;
-                    }
-                    else
-                    {
-                        throw new Exception(tokenRespnse.error_description);
-                    }
-                }
-                catch (Exception ex)
+                if (tokenRespnse.error == "authorization_pending")
                 {
-                    throw;
+                    // The user code has not been authorised yet
+                    // Requests are throttled - if you try to get the code too frequently you will be banned
+                    // try again in 5 seconds
+                    await Task.Delay(5000);
+                    continue;
+                }
+                else
+                {
+                    throw new Exception(tokenRespnse.error_description);
                 }
             }
 
         }
-
-        stopwatch.Stop();
 
         throw new Exception("The user code has expired");
     }
