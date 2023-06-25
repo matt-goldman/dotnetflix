@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:ZXing.Net.Maui.Controls;assembly=ZXing.Net.MAUI.Controls"
              x:Class="DotNetFlix.UI.MainPage">
 
     <ScrollView>
@@ -9,31 +10,119 @@
             Padding="30,0"
             VerticalOptions="Center">
 
-            <Image
-                Source="dotnet_bot.png"
-                SemanticProperties.Description="Cute dot net bot waving hi to you!"
-                HeightRequest="200"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Hello, World!"
-                SemanticProperties.HeadingLevel="Level1"
-                FontSize="32"
-                HorizontalOptions="Center" />
-
-            <Label
-                Text="Welcome to .NET Multi-platform App UI"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I"
-                FontSize="18"
-                HorizontalOptions="Center" />
+            <Image Source="commbox"
+                   WidthRequest="500"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Aspect="AspectFit"/>
 
             <Button
-                x:Name="CounterBtn"
-                Text="Click me"
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
+                x:Name="LoginButton"
+                Text="Log In"
+                Clicked="LoginButton_Clicked"
                 HorizontalOptions="Center" />
+
+            <Border Stroke="Black"
+                    StrokeShape="RoundRectangle 20"
+                    HorizontalOptions="Center"
+                    Padding="30"
+                    WidthRequest="400"
+                    x:Name="UserCodeMessage"
+                    IsVisible="False">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="20">
+
+                    <Label Text="Scan this QR code to login:"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+
+                    <controls:BarcodeGeneratorView Format="QrCode"
+                                                   x:Name="QrView"
+                                                   WidthRequest="150"
+                                                   HeightRequest="150"/>
+
+
+                    <Label HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           x:Name="UrlLabel"/>
+                    <HorizontalStackLayout HorizontalOptions="Center"
+                                           Spacing="10">
+                        <Label HorizontalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               FontSize="Title"
+                               x:Name="UserCodeLabel"/>
+                        <Button Text="📋"
+                                BackgroundColor="{StaticResource Gray200}"
+                                VerticalOptions="Start"
+                                Clicked="CopyUserCode_Clicked"
+                                HorizontalOptions="Center"/>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <ActivityIndicator HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               IsRunning="True"
+                               IsVisible="False"
+                               x:Name="LoginIndicator"/>
+
+            <Border Stroke="Black"
+                    StrokeShape="RoundRectangle 20"
+                    x:Name="SessionTimerMessage"
+                    HorizontalOptions="Center"
+                    Padding="30"
+                    WidthRequest="400"
+                    IsVisible="False">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="20">
+                    <Label HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"
+                           FontSize="Title"
+                           Text="How long is your session?"/>
+                    <FlexLayout HeightRequest="60"
+                                JustifyContent="SpaceAround">
+                        <Button Text="15 mins"
+                                Clicked="SessionTimer_Dismissed"/>
+                        <Button Text="30 mins"
+                                Clicked="SessionTimer_Dismissed"/>
+                        <Button Text="50 mins"
+                                Clicked="SessionTimer_Dismissed"/>
+                    </FlexLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Border Stroke="Black"
+                    StrokeShape="RoundRectangle 20"
+                    x:Name="LoggedInMessage"
+                    HorizontalOptions="Center"
+                    Padding="30"
+                    WidthRequest="400"
+                    IsVisible="False">
+                <VerticalStackLayout HorizontalOptions="Center"
+                                     VerticalOptions="Center"
+                                     Spacing="20">
+                    <Label Text="Success!"
+                           FontSize="Title"
+                           HorizontalOptions="Center"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label Text="You are logged in!"
+                           HorizontalOptions="Center"
+                           FontSize="Large"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Label x:Name="UsernameLabel"
+                           HorizontalOptions="Center"
+                           FontSize="Large"
+                           HorizontalTextAlignment="Center"/>
+
+                    <Button HorizontalOptions="Center"
+                            Text="Log Out"
+                            Clicked="LogoutButton_Clicked"/>
+                </VerticalStackLayout>
+            </Border>
 
         </VerticalStackLayout>
     </ScrollView>
