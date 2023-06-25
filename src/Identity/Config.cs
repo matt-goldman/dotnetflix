@@ -94,5 +94,50 @@ public static class Config
                 AllowOfflineAccess = true,
                 AllowedScopes = { "openid", "profile", "dotnetflix-api" }
             },
+
+            // Blazor UI client
+            new Client
+            {
+                ClientName = "DotNetFlix Web UI",
+                ClientId = "dotnetflix-web-ui",
+                RequirePkce = true,
+                RequireClientSecret = false,
+                AlwaysIncludeUserClaimsInIdToken = true,
+                AlwaysSendClientClaims = true,
+                AllowedGrantTypes = { "authorization_code" },
+                AllowOfflineAccess = true,
+                AllowedScopes = {
+                "openid",
+                "profile",
+                "email",
+                "dotnetflix-api"
+                },
+                RedirectUris = { "https://localhost:7009/authentication/login-callback" },
+                AllowedCorsOrigins = { "https://localhost:7009" }
+            },
+
+            // Videos service client
+            new Client
+            {
+                ClientId = "videos.client",
+                ClientName = "Videos Service Client",
+
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                ClientSecrets = { new Secret("709CA69A-506A-48D5-84C1-57B01105E660".Sha256()) },
+
+                AllowedScopes = { "videos-api" }
+            },
+
+            // Subscriptions service client
+            new Client
+            {
+                ClientId = "subscriptions.client",
+                ClientName = "Subscriptions Service Client",
+
+                AllowedGrantTypes = GrantTypes.ClientCredentials,
+                ClientSecrets = { new Secret("11145535-2CE4-4B89-9C94-45DD8EA994E5".Sha256()) },
+
+                AllowedScopes = { "subscriptions-api" }
+            },
         };
 }

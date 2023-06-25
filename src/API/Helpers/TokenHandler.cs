@@ -1,4 +1,5 @@
 ﻿using DotNetFlix.API.Services.Models;
+using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -19,10 +20,10 @@ public class TokenHandler : DelegatingHandler
     Uri _subscriptionsUri;
     
 
-    public TokenHandler(IHttpClientFactory httpClientFactory, ServiceConfig serviceConfig)
+    public TokenHandler(IHttpClientFactory httpClientFactory, IOptions<ServiceConfig> options)
     {
         _httpClient = httpClientFactory.CreateClient(nameof(IdentityClient));
-        _serviceConfig = serviceConfig;
+        _serviceConfig = options.Value;
 
         _videosUri = new Uri(_serviceConfig.VideosClient.BaseUrl);
         _subscriptionsUri = new Uri(_serviceConfig.SubscriptionsClient.BaseUrl);
@@ -77,9 +78,9 @@ public class TokenHandler : DelegatingHandler
         paramVals.Add("grant_type", grantType);
 
 
-        _httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+        //_httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
-        var response = await _httpClient.PostAsync("/oauth2/v2.0/token", new FormUrlEncodedContent(paramVals));
+        var response = await _httpClient.PostAsync("/connect/token", new FormUrlEncodedContent(paramVals));
 
         if (response.IsSuccessStatusCode)
         {
@@ -89,7 +90,7 @@ public class TokenHandler : DelegatingHandler
 
             token = tokenResponse?.access_token ?? "";
 
-            expires = expires.AddSeconds(int.Parse(tokenResponse?.expires_in ?? "0"));
+            expires = expires.AddSeconds(tokenResponse!.expires_in);
         }
         else
         {

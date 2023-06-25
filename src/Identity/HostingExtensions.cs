@@ -23,7 +23,7 @@ internal static class HostingExtensions
             .AddEntityFrameworkStores<ApplicationDbContext>()
             .AddDefaultTokenProviders();
 
-        List<Client> clients = builder.Configuration.GetSection("Clients").Get<List<Client>>();
+        //List<Client> clients = builder.Configuration.GetSection("Clients").Get<List<Client>>();
 
         builder.Services
             .AddIdentityServer(options =>
@@ -39,7 +39,8 @@ internal static class HostingExtensions
             .AddInMemoryIdentityResources(Config.IdentityResources)
             .AddInMemoryApiScopes(Config.ApiScopes)
             .AddInMemoryApiResources(Config.ApiResources)
-            .AddInMemoryClients(clients)
+            //.AddInMemoryClients(clients)
+            .AddInMemoryClients(Config.Clients)
             .AddAspNetIdentity<ApplicationUser>();
         
         builder.Services.AddAuthentication()

@@ -25,17 +25,19 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddScoped<SubscriptionsService>();
 builder.Services.AddScoped<VideosService>();
 
-var serviceOptions = builder.Configuration.Get<ServiceConfig>()!;
-builder.Services.AddSingleton(serviceOptions);
 
-builder.Services.AddSingleton<TokenHandler>();
+builder.Services.Configure<ServiceConfig>(builder.Configuration.GetSection(nameof(ServiceConfig)));
+
+builder.Services.AddScoped<TokenHandler>();
 
 builder.Services.AddHttpClient(TokenHandler.IdentityClient, client => client.BaseAddress = new Uri(authority));
 
-builder.Services.AddHttpClient(SubscriptionsService.SubscriptionsClient, client => client.BaseAddress = new Uri(serviceOptions.SubscriptionsClient.BaseUrl))
+string subscriptionsUri = builder.Configuration.GetValue<string>("ServiceConfig:SubscriptionsClient:BaseUrl")!;
+builder.Services.AddHttpClient(SubscriptionsService.SubscriptionsClient, client => client.BaseAddress = new Uri(subscriptionsUri))
     .AddHttpMessageHandler((s) => s.GetService<TokenHandler>());
 
-builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri(serviceOptions.VideosClient.BaseUrl))
+string videosUri = builder.Configuration.GetValue<string>("ServiceConfig:VideosClient:BaseUrl")!;
+builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri(videosUri))
     .AddHttpMessageHandler((s) => s.GetService<TokenHandler>());
 
 
