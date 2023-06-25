@@ -2,6 +2,7 @@
 using DotNetFlix.Shared;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace DotNetFlix.API.Controllers;
 
@@ -17,11 +18,21 @@ public class VideosController : ControllerBase
         _videosService = videosService;
     }
 
-    [HttpGet(Name = "Videos")]
+    [HttpGet("videos/playlists/{playlistId}")]
     public async Task<List<VideoDto>> Get(string playlistID)
     {
-        var videos = await _videosService.GetVideos(playlistID);
+        var username = User.FindFirstValue(ClaimTypes.Email)!;
+
+        var videos = await _videosService.GetVideos(playlistID, username);
 
         return videos;
+    }
+
+    [HttpGet("videos/playlists")]
+    public async Task<List<PlaylistDto>> GetPlaylists()
+    {
+        var playlists = await _videosService.GetPlaylists();
+
+        return playlists;
     }
 }

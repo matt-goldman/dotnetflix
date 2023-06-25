@@ -1,0 +1,50 @@
+﻿@page "/videos"
+@using DotNetFlix.Shared;
+@using System.Net.Http.Json;
+@using WebUI.Helpers;
+@inject IHttpClientFactory clientFactory
+
+<PageTitle>Videos</PageTitle>
+
+<h1>Videos</h1>
+
+<p>This component demonstrates fetching videos from the API.</p>
+<P>Click on a playlist to get its videos</P>
+
+@if (playlists == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var playlist in playlists)
+            {
+                <tr>
+                    <td>@playlist.Title</td>
+                    <td>@playlist.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private PlaylistDto[]? playlists;
+
+    private HttpClient client;
+
+    protected override async Task OnInitializedAsync()
+    {
+        client = clientFactory.CreateClient(AuthHandler.AuthenticatedClient);
+        
+        playlists = await client.GetFromJsonAsync<PlaylistDto[]>("videos/playlists");
+    }
+}

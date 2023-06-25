@@ -11,27 +11,22 @@ public class VideosService
     
     private readonly SubscriptionsService _subscriptionsService;
 
-    public VideosService(IHttpClientFactory httpClientFactory, SubscriptionsService subscriptionsService, IHttpContextAccessor httpContext)
+    public VideosService(IHttpClientFactory httpClientFactory, SubscriptionsService subscriptionsService)
     {
         _videosClient = httpClientFactory.CreateClient(VideosClient);
         _subscriptionsService = subscriptionsService;
-        _httpContext = httpContext;
     }
 
-    public IHttpContextAccessor _httpContext { get; }
-
-    public async Task<List<VideoDto>> GetVideos(string playlistID)
+    public async Task<List<VideoDto>> GetVideos(string playlistID, string usernmae)
     {
-        var videoList = await _videosClient.GetFromJsonAsync<List<VideoDto>>($"videos/{playlistID}");
+        var videoList = await _videosClient.GetFromJsonAsync<List<VideoDto>>($"playlists/{playlistID}/videos");
 
         if (videoList is null)
         {
             return new List<VideoDto>();
         }
 
-        var un = _httpContext!.HttpContext!.User.FindFirst(ClaimTypes.Email)!.Value;
-
-        var isPremium = await _subscriptionsService.SubscriberIsPremium(un);
+        var isPremium = await _subscriptionsService.SubscriberIsPremium(usernmae);
 
         foreach (var video in videoList)
         {
@@ -39,5 +34,11 @@ public class VideosService
         }
 
         return videoList;
+    }
+
+    public async Task<List<PlaylistDto>> GetPlaylists()
+    {
+        var playlists = await _videosClient.GetFromJsonAsync<List<PlaylistDto>>($"playlists/");
+        return playlists ?? new List<PlaylistDto>();
     }
 }

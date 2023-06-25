@@ -21,7 +21,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.SubscriptionServ
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DotNetFlix.VideoService", "src\DotNetFlix.VideoService\DotNetFlix.VideoService.csproj", "{3DF38F28-38BE-4933-A629-425B518427F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YouTube Test App", "src\YouTube Test App\YouTube Test App.csproj", "{B941AE30-6106-43BC-8E57-FF830ECBE91F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "YouTube Test App", "src\YouTube Test App\YouTube Test App.csproj", "{B941AE30-6106-43BC-8E57-FF830ECBE91F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
