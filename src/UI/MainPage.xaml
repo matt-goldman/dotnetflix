@@ -10,7 +10,7 @@
             Padding="30,0"
             VerticalOptions="Center">
 
-            <Image Source="commbox"
+            <Image Source="dnf_logo"
                    WidthRequest="500"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
