@@ -10,17 +10,11 @@
             Padding="30,0"
             VerticalOptions="Center">
 
-            <Image Source="commbox"
+            <Image Source="dnf_logo"
                    WidthRequest="500"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
                    Aspect="AspectFit"/>
-
-            <Button
-                x:Name="LoginButton"
-                Text="Log In"
-                Clicked="LoginButton_Clicked"
-                HorizontalOptions="Center" />
 
             <Border Stroke="Black"
                     StrokeShape="RoundRectangle 20"
@@ -90,37 +84,6 @@
                         <Button Text="50 mins"
                                 Clicked="SessionTimer_Dismissed"/>
                     </FlexLayout>
-                </VerticalStackLayout>
-            </Border>
-
-            <Border Stroke="Black"
-                    StrokeShape="RoundRectangle 20"
-                    x:Name="LoggedInMessage"
-                    HorizontalOptions="Center"
-                    Padding="30"
-                    WidthRequest="400"
-                    IsVisible="False">
-                <VerticalStackLayout HorizontalOptions="Center"
-                                     VerticalOptions="Center"
-                                     Spacing="20">
-                    <Label Text="Success!"
-                           FontSize="Title"
-                           HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
-
-                    <Label Text="You are logged in!"
-                           HorizontalOptions="Center"
-                           FontSize="Large"
-                           HorizontalTextAlignment="Center"/>
-
-                    <Label x:Name="UsernameLabel"
-                           HorizontalOptions="Center"
-                           FontSize="Large"
-                           HorizontalTextAlignment="Center"/>
-
-                    <Button HorizontalOptions="Center"
-                            Text="Log Out"
-                            Clicked="LogoutButton_Clicked"/>
                 </VerticalStackLayout>
             </Border>
 
