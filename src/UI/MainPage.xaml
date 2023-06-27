@@ -5,89 +5,62 @@
              x:Class="DotNetFlix.UI.MainPage">
 
     <ScrollView>
-        <VerticalStackLayout
-            Spacing="25"
-            Padding="30,0"
-            VerticalOptions="Center">
+        <Grid RowDefinitions="*, 4*"
+              ColumnDefinitions="3*, 2*"
+              Padding="30,0">
 
             <Image Source="dnf_logo"
                    WidthRequest="500"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
-                   Aspect="AspectFit"/>
+                   Aspect="AspectFit"
+                   Grid.ColumnSpan="2"/>
 
-            <Border Stroke="Black"
-                    StrokeShape="RoundRectangle 20"
-                    HorizontalOptions="Center"
+            <Border Grid.Row="1"
+                    Grid.Column="0"
                     Padding="30"
                     WidthRequest="400"
-                    x:Name="UserCodeMessage"
-                    IsVisible="False">
-                <VerticalStackLayout HorizontalOptions="Center"
+                    Background="{StaticResource OverlayGradient}"
+                    Opacity="0.5">
+                <VerticalStackLayout Spacing="10"
                                      VerticalOptions="Center"
-                                     Spacing="20">
-
-                    <Label Text="Scan this QR code to login:"
+                                     HorizontalOptions="Center">
+                    <Label x:Name="UrlLabel"
                            HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"/>
+                           VerticalOptions="Center" />
 
-                    <controls:BarcodeGeneratorView Format="QrCode"
-                                                   x:Name="QrView"
-                                                   WidthRequest="150"
-                                                   HeightRequest="150"/>
-
+                    <Label x:Name="CodeLabel"
+                           HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="Title" />
 
                     <Label HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"
-                           x:Name="UrlLabel"/>
-                    <HorizontalStackLayout HorizontalOptions="Center"
-                                           Spacing="10">
-                        <Label HorizontalOptions="Center"
-                               HorizontalTextAlignment="Center"
-                               FontSize="Title"
-                               x:Name="UserCodeLabel"/>
-                        <Button Text="📋"
-                                BackgroundColor="{StaticResource Gray200}"
-                                VerticalOptions="Start"
-                                Clicked="CopyUserCode_Clicked"
-                                HorizontalOptions="Center"/>
-                    </HorizontalStackLayout>
+                           VerticalOptions="Center"
+                           Text="Or scan the QR code"/>
                 </VerticalStackLayout>
             </Border>
+
+            <Border Grid.Row="1"
+                    Grid.Column="1"
+                    Padding="30"
+                    WidthRequest="400"
+                    Background="{StaticResource OverlayGradient}"
+                    Opacity="0.5">
+                <controls:BarcodeGeneratorView Format="QrCode"
+                                               x:Name="QrView"
+                                               WidthRequest="150"
+                                               HeightRequest="150"/>
+            </Border>
+
 
             <ActivityIndicator HorizontalOptions="Center"
                                VerticalOptions="Center"
                                IsRunning="True"
                                IsVisible="False"
+                               Grid.ColumnSpan="2"
+                               Grid.RowSpan="2"
                                x:Name="LoginIndicator"/>
-
-            <Border Stroke="Black"
-                    StrokeShape="RoundRectangle 20"
-                    x:Name="SessionTimerMessage"
-                    HorizontalOptions="Center"
-                    Padding="30"
-                    WidthRequest="400"
-                    IsVisible="False">
-                <VerticalStackLayout HorizontalOptions="Center"
-                                     VerticalOptions="Center"
-                                     Spacing="20">
-                    <Label HorizontalOptions="Center"
-                           HorizontalTextAlignment="Center"
-                           FontSize="Title"
-                           Text="How long is your session?"/>
-                    <FlexLayout HeightRequest="60"
-                                JustifyContent="SpaceAround">
-                        <Button Text="15 mins"
-                                Clicked="SessionTimer_Dismissed"/>
-                        <Button Text="30 mins"
-                                Clicked="SessionTimer_Dismissed"/>
-                        <Button Text="50 mins"
-                                Clicked="SessionTimer_Dismissed"/>
-                    </FlexLayout>
-                </VerticalStackLayout>
-            </Border>
-
-        </VerticalStackLayout>
+        </Grid>
     </ScrollView>
 
 </ContentPage>

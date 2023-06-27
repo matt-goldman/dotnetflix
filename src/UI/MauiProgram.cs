@@ -1,4 +1,5 @@
 ﻿using DotNetFlix.UI.Helpers;
+using DotNetFlix.UI.Pages;
 using DotNetFlix.UI.Services;
 using Microsoft.Extensions.Logging;
 using ZXing.Net.Maui.Controls;
@@ -17,7 +18,8 @@ public static class MauiProgram
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
 			})
-			.UseBarcodeReader();
+			.UseBarcodeReader()
+			.UsePageResolver();
 
 		builder.Services.AddSingleton(new AuthSettings
 		{
@@ -33,6 +35,8 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton<AuthHandler>();
 
+		builder.Services.AddSingleton<AuthService>();
+
 		builder.Services.AddHttpClient();
 
 		builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri("https://localhost:7132/"))
@@ -42,6 +46,8 @@ public static class MauiProgram
 
 
 		builder.Services.AddSingleton<MainPage>();
+		builder.Services.AddSingleton<PlaylistsPage>();
+		builder.Services.AddSingleton<VideosPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();

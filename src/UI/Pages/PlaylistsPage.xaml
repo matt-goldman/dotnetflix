@@ -2,11 +2,50 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DotNetFlix.UI.Pages.PlaylistsPage"
+             x:Name="ListPage"
              Title="PlaylistsPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+
+    <Grid RowDefinitions="2*, 1*, *">
+
+        <Image Source="dnf_logo"
+                   WidthRequest="500"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center"
+                   Aspect="AspectFit"/>
+
+        <Label Grid.Row="1"
+               Text="Popular playlists"
+               FontSize="Header"/>
+
+        <FlexLayout Grid.Row="2"
+                    JustifyContent="SpaceEvenly"
+                    Wrap="Wrap"
+                    BindableLayout.ItemsSource="{Binding Playlists}">
+            <BindableLayout.ItemTemplate>
+                <DataTemplate>
+                    <Grid RowDefinitions="5*, 1*, 2*">
+                        <Image Grid.Row="0"
+                               Source="{Binding Thumbnail}"
+                               Aspect="AspectFill"
+                               VerticalOptions="FillAndExpand"
+                               HorizontalOptions="FillAndExpand"/>
+
+                        <Label Grid.Row="1"
+                               FontSize="Large"
+                               Text="{Binding Title}"/>
+
+                        <Label Grid.Row="2"
+                               Text="{Binding Description}"/>
+
+                        <Grid.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding Source={x:Reference ListPage}, Path=BindingContext.ViewPlaylistCommand}"
+                                                  CommandParameter="{Binding Id}"
+                                                  NumberOfTapsRequired="1" />
+                        </Grid.GestureRecognizers>
+                    </Grid>
+                </DataTemplate>
+            </BindableLayout.ItemTemplate>
+        </FlexLayout>
+    </Grid>
+    
 </ContentPage>

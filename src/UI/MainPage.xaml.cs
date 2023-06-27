@@ -1,4 +1,5 @@
-﻿using DotNetFlix.UI.Services;
+﻿using DotNetFlix.UI.Pages;
+using DotNetFlix.UI.Services;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace DotNetFlix.UI;
@@ -17,29 +18,27 @@ public partial class MainPage : ContentPage
         _authService = authService;
     }
 
-    private async void LoginButton_Clicked(object sender, EventArgs e)
+    protected async override void OnAppearing()
     {
         LoginIndicator.IsVisible = true;
 
         var response = await _authService.GetUserCode().ConfigureAwait(true);
 
-        UserCodeLabel.Text = response.user_code;
+        UrlLabel.Text = $"Go to {response.verification_uri} and enter the following code to sign in:";
+
+        CodeLabel.Text = response.user_code;
 
         _authUrl = response.verification_uri_complete;
 
         QrView.Value = _authUrl;
-
-        UrlLabel.Text = $"Or go to this URL and enter the code below: {response.verification_uri}";
-
-        UserCodeMessage.IsVisible = true;
-
+        
         try
         {
             var authResponse = await _authService.GetToken();
 
             _idToken = ParseToken(authResponse.id_token);
-            UserCodeMessage.IsVisible = false;
-            SessionTimerMessage.IsVisible = true;
+
+            await Navigation.PushModalAsync<PlaylistsPage>();
         }
         catch (Exception ex)
         {
@@ -49,30 +48,6 @@ public partial class MainPage : ContentPage
         {
             LoginIndicator.IsVisible = false;
         }
-    }
-
-    private void LogoutButton_Clicked(object sender, EventArgs e)
-    {
-        _idToken = null;
-        UserCodeMessage.IsVisible = false;
-        SessionTimerMessage.IsVisible = false;
-        LoginButton.IsVisible = true;
-        LoggedInMessage.IsVisible = false;
-    }
-
-    private async void CopyUserCode_Clicked(object sender, EventArgs e)
-    {
-        await Clipboard.Default.SetTextAsync(_authUrl);
-    }
-
-    private void SessionTimer_Dismissed(object sender, EventArgs e)
-    {
-        var name = _idToken.Claims.FirstOrDefault(c => c.Type == "name")?.Value;
-
-        UsernameLabel.Text = name;
-
-        SessionTimerMessage.IsVisible = false;
-        LoggedInMessage.IsVisible = true;
     }
 
     private JwtSecurityToken ParseToken(string inTtoken)
