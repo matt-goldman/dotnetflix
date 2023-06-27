@@ -14,8 +14,6 @@ public class AuthService
     private TokenResponse _currentToken;
     private DateTime _tokenExpiresAt = DateTime.UtcNow;
 
-    private readonly HttpRequestMessage _tokenRequest;
-
     private readonly HttpRequestMessage _codeRequest;
 
     public AuthService(IHttpClientFactory clientFactory, AuthSettings authSettings)
@@ -23,7 +21,6 @@ public class AuthService
         _httpClient = clientFactory.CreateClient();
         _authSettings = authSettings;
 
-        _tokenRequest = GenerateTokenRequest();
         _codeRequest = GenerateCodeRequest();
     }
 
@@ -79,7 +76,9 @@ public class AuthService
         
         while (DateTime.UtcNow < _deviceCodeExpires)
         {
-            var response = await _httpClient.SendAsync(_tokenRequest);
+            var tokenRequest = GenerateTokenRequest();
+            
+            var response = await _httpClient.SendAsync(tokenRequest);
 
             if (response.IsSuccessStatusCode)
             {

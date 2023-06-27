@@ -12,10 +12,10 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<!-- Display name -->
-		<ApplicationTitle>DotNetFlix.UI</ApplicationTitle>
+		<ApplicationTitle>DotNetFlix</ApplicationTitle>
 
 		<!-- App Identifier -->
-		<ApplicationId>com.companyname.dotnetflix.ui</ApplicationId>
+		<ApplicationId>com.dotnetflix.app</ApplicationId>
 		<ApplicationIdGuid>0c35eea8-b3f2-4ea4-ae3a-eb10f2fd095f</ApplicationIdGuid>
 
 		<!-- Versions -->

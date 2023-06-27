@@ -44,19 +44,19 @@
     <Color x:Key="BackgroundGradientStart">#0b0c10</Color>
     <Color x:Key="BackgroundGradientEnd">#11021a</Color>
 
-    <Color x:Key="OverLayGradientStart">#B1B2B5</Color>
-    <Color x:Key="OverlayGradientEnd">#454549</Color>
+    <Color x:Key="OverLayGradientStart">#4BB1B2B5</Color>
+    <Color x:Key="OverlayGradientEnd">#4B454549</Color>
 
     <Color x:Key="PrimaryText">#ddadee</Color>
 
-    <GradientBrush x:Key="BackgroundGradient">
-        <GradientStop Offset="0" Color="{StaticResource BackgroundGradientStart}" />
-        <GradientStop Offset="1" Color="{StaticResource BackgroundGradientEnd}" />
-    </GradientBrush>
+    <LinearGradientBrush x:Key="BackgroundGradient">
+        <GradientStop Offset="0" Color="{DynamicResource BackgroundGradientStart}" />
+        <GradientStop Offset="1" Color="{DynamicResource BackgroundGradientEnd}" />
+    </LinearGradientBrush>
 
-    <GradientBrush x:Key="OverlayGradient">
-        <GradientStop Offset="0" Color="{StaticResource OverLayGradientStart}" />
-        <GradientStop Offset="1" Color="{StaticResource OverlayGradientEnd}" />
-    </GradientBrush>
+    <LinearGradientBrush x:Key="OverlayGradient">
+        <GradientStop Offset="0" Color="{DynamicResource OverLayGradientStart}" />
+        <GradientStop Offset="1" Color="{DynamicResource OverlayGradientEnd}" />
+    </LinearGradientBrush>
 
 </ResourceDictionary>

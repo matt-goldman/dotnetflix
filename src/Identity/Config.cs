@@ -115,6 +115,27 @@ public static class Config
                 RedirectUris = { "https://localhost:7009/authentication/login-callback" },
                 AllowedCorsOrigins = { "https://localhost:7009" }
             },
+            
+            // MAUI UI Client
+            new Client
+            {
+                ClientName = "DotNetFlix UI",
+                ClientId = "dotnetflix-client",
+
+                AllowedGrantTypes = GrantTypes.DeviceFlow,
+                RequireClientSecret = false,
+
+                AlwaysIncludeUserClaimsInIdToken = true,
+
+                AllowOfflineAccess = true,
+
+                AllowedScopes = {
+                "openid",
+                "profile",
+                "email",
+                "dotnetflix-api"
+                }
+            },
 
             // Videos service client
             new Client

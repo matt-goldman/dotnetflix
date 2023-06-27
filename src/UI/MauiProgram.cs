@@ -23,10 +23,10 @@ public static class MauiProgram
 
 		builder.Services.AddSingleton(new AuthSettings
 		{
-            ClientId = "dotnetflix.client",
+            ClientId = "dotnetflix-client",
             DeviceCodeEndpoint = "connect/deviceauthorization",
             TokenEndpoint = "connect/token",
-            Scopes = "dotnetflix.api",
+            Scopes = "dotnetflix-api",
 #if DEBUG            
             BaseUrl = "https://localhost:5001/"
 #else

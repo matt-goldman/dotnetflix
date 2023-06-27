@@ -26,7 +26,7 @@ public class VideosService
     {
         var client = _httpClientFactory.CreateClient(VideosClient);
 
-        var videos = await client.GetFromJsonAsync<List<VideoDto>>($"Videos/playlists/{PlaylistId}");
+        var videos = await client.GetFromJsonAsync<List<VideoDto>>($"Videos/playlists/{playlistId}");
 
         return videos;
     }

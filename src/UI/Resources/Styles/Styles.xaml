@@ -374,7 +374,7 @@
     <Style TargetType="Page" ApplyToDerivedTypes="True">
         <Setter Property="Padding" Value="0"/>
         <!--<Setter Property="BackgroundColor" Value="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Black}}" />-->
-        <Setter Property="Background" Value="{StaticResource BackgroundGradient}"/>
+        <Setter Property="Background" Value="{DynamicResource BackgroundGradient}"/>
     </Style>
 
     <Style TargetType="Shell" ApplyToDerivedTypes="True">

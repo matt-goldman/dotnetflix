@@ -9,19 +9,21 @@
               ColumnDefinitions="3*, 2*"
               Padding="30,0">
 
-            <Image Source="dnf_logo"
+            <Image Source="dnf_logo.png"
                    WidthRequest="500"
                    HorizontalOptions="Center"
                    VerticalOptions="Center"
                    Aspect="AspectFit"
+                   Grid.Row="0"
+                   Grid.Column="0"
                    Grid.ColumnSpan="2"/>
 
             <Border Grid.Row="1"
                     Grid.Column="0"
                     Padding="30"
-                    WidthRequest="400"
-                    Background="{StaticResource OverlayGradient}"
-                    Opacity="0.5">
+                    WidthRequest="600"
+                    HeightRequest="400"
+                    Background="{DynamicResource OverlayGradient}">
                 <VerticalStackLayout Spacing="10"
                                      VerticalOptions="Center"
                                      HorizontalOptions="Center">
@@ -44,8 +46,8 @@
                     Grid.Column="1"
                     Padding="30"
                     WidthRequest="400"
-                    Background="{StaticResource OverlayGradient}"
-                    Opacity="0.5">
+                    HeightRequest="400"
+                    Background="{DynamicResource OverlayGradient}">
                 <controls:BarcodeGeneratorView Format="QrCode"
                                                x:Name="QrView"
                                                WidthRequest="150"
@@ -57,6 +59,8 @@
                                VerticalOptions="Center"
                                IsRunning="True"
                                IsVisible="False"
+                               Grid.Row="0"
+                               Grid.Column="0"
                                Grid.ColumnSpan="2"
                                Grid.RowSpan="2"
                                x:Name="LoginIndicator"/>
