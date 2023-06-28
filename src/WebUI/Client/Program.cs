@@ -13,8 +13,10 @@ namespace WebUI
             builder.RootComponents.Add<HeadOutlet>("head::after");
 
             builder.Services.AddScoped<AuthHandler>();
-            
-            builder.Services.AddHttpClient(AuthHandler.AuthenticatedClient, cfg => cfg.BaseAddress = new Uri("https://localhost:7132/"))
+
+            var apiUri = builder.Configuration["ApiUri"]!;
+
+            builder.Services.AddHttpClient(AuthHandler.AuthenticatedClient, cfg => cfg.BaseAddress = new Uri(apiUri))
                 .AddHttpMessageHandler((s) => s.GetService<AuthHandler>());
 
             builder.Services.AddOidcAuthentication(options =>
