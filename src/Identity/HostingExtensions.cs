@@ -57,6 +57,14 @@ internal static class HostingExtensions
 
         builder.Services.AddScoped<IEmailSender, EmailService>();
 
+        builder.Services.AddCors(opt =>
+        {
+            opt.AddPolicy("CorsPolicy", policy =>
+            {
+                policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:7009", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net");
+            });
+        });
+
         return builder.Build();
     }
     
@@ -71,6 +79,7 @@ internal static class HostingExtensions
 
         app.UseStaticFiles();
         app.UseRouting();
+        app.UseCors("CorsPolicy");
         app.UseIdentityServer();
         app.UseAuthorization();
         
