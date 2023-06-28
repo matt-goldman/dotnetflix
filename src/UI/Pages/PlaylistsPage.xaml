@@ -5,47 +5,67 @@
              x:Name="ListPage"
              Title="PlaylistsPage">
 
-    <Grid RowDefinitions="2*, 1*, *">
+    <Grid RowDefinitions="1*, 1*, 5*"
+          Padding="50">
 
-        <Image Source="dnf_logo"
+        <Image Source="dnf_logo.png"
+               Margin="30"
                    WidthRequest="500"
                    HorizontalOptions="Center"
-                   VerticalOptions="Center"
+                   VerticalOptions="Start"
                    Aspect="AspectFit"/>
 
         <Label Grid.Row="1"
                Text="Popular playlists"
                FontSize="Header"/>
 
-        <FlexLayout Grid.Row="2"
-                    JustifyContent="SpaceEvenly"
-                    Wrap="Wrap"
-                    BindableLayout.ItemsSource="{Binding Playlists}">
-            <BindableLayout.ItemTemplate>
-                <DataTemplate>
-                    <Grid RowDefinitions="5*, 1*, 2*">
-                        <Image Grid.Row="0"
-                               Source="{Binding Thumbnail}"
-                               Aspect="AspectFill"
-                               VerticalOptions="FillAndExpand"
-                               HorizontalOptions="FillAndExpand"/>
+        <ScrollView Grid.Row="2">
+            <FlexLayout JustifyContent="SpaceEvenly"
+                        Wrap="Wrap"
+                        BindableLayout.ItemsSource="{Binding Playlists}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid RowDefinitions="5*, 1*, 2*"
+                              WidthRequest="400"
+                              HeightRequest="300"
+                              Margin="0,0,0,10">
+                            <Grid.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference ListPage}, Path=BindingContext.ViewPlaylistCommand}"
+                                                      CommandParameter="{Binding Id}"
+                                                      NumberOfTapsRequired="1" />
+                            </Grid.GestureRecognizers>
 
-                        <Label Grid.Row="1"
-                               FontSize="Large"
-                               Text="{Binding Title}"/>
+                            <Image Grid.Row="0"
+                                   Source="{Binding Thumbnail}"
+                                   Aspect="AspectFill"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding Source={x:Reference ListPage}, Path=BindingContext.ViewPlaylistCommand}"
+                                                      CommandParameter="{Binding Id}"
+                                                      NumberOfTapsRequired="1" />
+                                </Image.GestureRecognizers>
+                            </Image>
 
-                        <Label Grid.Row="2"
-                               Text="{Binding Description}"/>
+                            <Label Grid.Row="1"
+                                   FontSize="Large"
+                                   Text="{Binding Title}"/>
 
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer Command="{Binding Source={x:Reference ListPage}, Path=BindingContext.ViewPlaylistCommand}"
-                                                  CommandParameter="{Binding Id}"
-                                                  NumberOfTapsRequired="1" />
-                        </Grid.GestureRecognizers>
-                    </Grid>
-                </DataTemplate>
-            </BindableLayout.ItemTemplate>
-        </FlexLayout>
+                            <Label Grid.Row="2"
+                                   Text="{Binding Description}"/>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+        </ScrollView>
+
+        <ActivityIndicator HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           IsRunning="True"
+                           IsVisible="False"
+                           Grid.Row="0"
+                           Grid.RowSpan="3"
+                           x:Name="LoadingIndicator"/>
     </Grid>
     
 </ContentPage>

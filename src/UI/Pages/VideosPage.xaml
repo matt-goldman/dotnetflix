@@ -3,10 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              x:Class="DotNetFlix.UI.Pages.VideosPage"
              Title="VideosPage">
-    <VerticalStackLayout>
-        <Label 
-            Text="Welcome to .NET MAUI!"
-            VerticalOptions="Center" 
-            HorizontalOptions="Center" />
-    </VerticalStackLayout>
+    <Grid RowDefinitions="1*, 1*, 5*"
+          Padding="50">
+
+        <Image Source="dnf_logo.png"
+               Margin="30"
+               WidthRequest="500"
+               HorizontalOptions="Center"
+               VerticalOptions="Start"
+               Aspect="AspectFit"/>
+
+        <Label Grid.Row="1"
+               x:Name="TitleLabel"
+               FontSize="Header"/>
+
+        <ScrollView Grid.Row="2">
+            <FlexLayout JustifyContent="SpaceEvenly"
+                        Wrap="Wrap"
+                        BindableLayout.ItemsSource="{Binding Videos}">
+                <BindableLayout.ItemTemplate>
+                    <DataTemplate>
+                        <Grid RowDefinitions="5*, 1*, 2*"
+                              WidthRequest="400"
+                              HeightRequest="300"
+                              Margin="0,0,0,10">
+                            <Image Grid.Row="0"
+                                   Source="{Binding ThumbnailUrl}"
+                                   Aspect="AspectFill"
+                                   VerticalOptions="FillAndExpand"
+                                   HorizontalOptions="FillAndExpand"
+                                   x:Name="VideoThumbnail"/>
+
+                            <Label Grid.Row="1"
+                                   FontSize="Large"
+                                   Text="{Binding Title}"/>
+
+                            <Label Grid.Row="2"
+                                   Text="{Binding Description}"/>
+
+                            <Border StrokeThickness="0"
+                                    Background="{DynamicResource OverlayGradient}"
+                                    VerticalOptions="FillAndExpand"
+                                    HorizontalOptions="FillAndExpand"
+                                    Grid.Row="0"
+                                    Opacity="0.3">
+                                <Label HorizontalOptions="Center"
+                                       VerticalOptions="Center"
+                                       HorizontalTextAlignment="Center"
+                                       FontSize="Header"
+                                       Text="🔒"
+                                       IsVisible="{Binding IsRestricted}"/>
+                            </Border>
+
+                            <Label Grid.Row="0"
+                                   VerticalOptions="EndAndExpand"
+                                   HorizontalOptions="EndAndExpand"
+                                   HorizontalTextAlignment="End"
+                                   FontSize="Title"
+                                   Text="👑"
+                                   IsVisible="{Binding IsPremium}"/>
+                        </Grid>
+                    </DataTemplate>
+                </BindableLayout.ItemTemplate>
+            </FlexLayout>
+        </ScrollView>
+
+        <ActivityIndicator HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           IsRunning="True"
+                           IsVisible="False"
+                           Grid.Row="0"
+                           Grid.RowSpan="3"
+                           x:Name="LoadingIndicator"/>
+    </Grid>
 </ContentPage>

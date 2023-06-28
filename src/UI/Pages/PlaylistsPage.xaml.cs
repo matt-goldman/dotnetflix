@@ -1,13 +1,15 @@
-using DotNetFlix.Shared;
 using DotNetFlix.UI.Models;
 using DotNetFlix.UI.Services;
 using System.Collections.ObjectModel;
+using System.Windows.Input;
 
 namespace DotNetFlix.UI.Pages;
 
 public partial class PlaylistsPage : ContentPage
 {
     private readonly VideosService _videosService;
+
+    public ICommand ViewPlaylistCommand => new Command<string>(async (id) => await ViewPlaylist(id));
 
     public ObservableCollection<Playlist> Playlists { get; set; } = new();
 
@@ -22,6 +24,8 @@ public partial class PlaylistsPage : ContentPage
     {
         base.OnAppearing();
 
+        LoadingIndicator.IsVisible = true;
+        
         try
         {
             var playlists = await _videosService.GetPlaylists();
@@ -41,5 +45,16 @@ public partial class PlaylistsPage : ContentPage
         {
             await DisplayAlert("Error", ex.Message, "OK");
         }
+        finally
+        {
+            LoadingIndicator.IsVisible = false;
+        }
+    }
+
+    private async Task ViewPlaylist(string playlistId)
+    {
+        await App.Current.MainPage.DisplayAlert(playlistId,"Showing playlist", "OK");
+        var title = Playlists.FirstOrDefault(p => p.Id == playlistId)?.Title;
+        await Navigation.PushAsync<VideosPage>(playlistId, title);
     }
 }

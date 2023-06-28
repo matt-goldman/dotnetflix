@@ -29,16 +29,18 @@
                                      HorizontalOptions="Center">
                     <Label x:Name="UrlLabel"
                            HorizontalOptions="Center"
-                           VerticalOptions="Center" />
+                           VerticalOptions="Center"
+                           FontSize="Title"/>
 
                     <Label x:Name="CodeLabel"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           FontSize="Title" />
+                           FontSize="48" />
 
                     <Label HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           Text="Or scan the QR code"/>
+                           Text="Or scan the QR code"
+                           FontSize="Title"/>
                 </VerticalStackLayout>
             </Border>
 
