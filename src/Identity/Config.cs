@@ -112,8 +112,8 @@ public static class Config
                 "email",
                 "dotnetflix-api"
                 },
-                RedirectUris = { "https://localhost:7009/authentication/login-callback" },
-                AllowedCorsOrigins = { "https://localhost:7009" }
+                RedirectUris = { "https://localhost:7009/authentication/login-callback", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net/authentication/login-callback" },
+                AllowedCorsOrigins = { "https://localhost:7009", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net" }
             },
             
             // MAUI UI Client
