@@ -1,12 +1,13 @@
-using Duende.IdentityServer;
 using DotNetFlix.Identity.Data;
 using DotNetFlix.Identity.Models;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Serilog;
-using Duende.IdentityServer.Models;
 using DotNetFlix.Identity.Services;
+using Duende.IdentityServer;
+using Duende.IdentityServer.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Serilog;
 
 namespace DotNetFlix.Identity;
 
@@ -51,6 +52,9 @@ internal static class HostingExtensions
                 options.ClientId = "copy client ID from Google here";
                 options.ClientSecret = "copy client secret from Google here";
             });
+
+        var userCodeDescriptor = ServiceDescriptor.Transient<IUserCodeService, CustomUserCodeService>();
+        builder.Services.Replace(userCodeDescriptor);
 
         builder.Services.AddScoped<IEmailSender, EmailService>();
 
