@@ -2,15 +2,10 @@
 @model DotNetFlix.Identity.Pages.Device.Index
 @{
 }
-
 @if (Model.Input.UserCode == null)
 {
     @*We need to collect the user code*@
     <div class="page-device-code">
-        <div class="lead">
-            <h1>User Code</h1>
-            <p>Please enter the code displayed on your device.</p>
-        </div>
 
         <div class="row">
             <div class="col-sm-8">
@@ -20,14 +15,22 @@
 
         <div class="row">
             <div class="col-sm-6">
-                <form asp-page="/Device/Index" method="get">
-                    <div class="form-group">
-                        <label for="userCode">User Code:</label>
-                        <input class="form-control" for="userCode" name="userCode" autofocus />
+                <div class="card acrylic position-relative-md top-50 top-60-lg start-50 p-5">
+                    <div class="card-header">
+                        <img src="/dnf_logo.png" class="img-fluid" />
                     </div>
+                    <div class="card-body">
+                        <p>Please enter the code displayed on your device.</p>
+                        <form asp-page="/Device/Index" method="get">
+                            <div class="form-group">
+                                <label for="userCode">User Code:</label>
+                                <input class="form-control fs-1 w-75" for="userCode" name="userCode" autofocus />
+                            </div>
 
-                    <button class="btn btn-primary" name="button">Submit</button>
-                </form>
+                            <button class="btn btn-primary mt-3" name="button">Submit</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
