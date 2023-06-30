@@ -44,8 +44,8 @@
     <Color x:Key="BackgroundGradientStart">#0b0c10</Color>
     <Color x:Key="BackgroundGradientEnd">#11021a</Color>
 
-    <Color x:Key="OverLayGradientStart">#4BB1B2B5</Color>
-    <Color x:Key="OverlayGradientEnd">#4B454549</Color>
+    <Color x:Key="OverLayGradientStart">#D5B1B2B5</Color>
+    <Color x:Key="OverlayGradientEnd">#C7454549</Color>
 
     <Color x:Key="PrimaryText">#ddadee</Color>
 

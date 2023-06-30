@@ -30,7 +30,7 @@ public static class MauiProgram
             BaseUrl = "https://dotnetflix-identity.azurewebsites.net/"//"https://localhost:5001/"
         });
 
-		builder.Services.AddSingleton<AuthHandler>();
+		builder.Services.AddTransient<AuthHandler>();
 
 		builder.Services.AddSingleton<AuthService>();
 

@@ -30,7 +30,7 @@ public partial class VideosPage : ContentPage
         {
             var videos = await _videosService.GetVideos(playlistId);
 
-            foreach (var video in Videos)
+            foreach (var video in videos)
             {
                 Videos.Add(video);
             }

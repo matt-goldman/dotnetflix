@@ -26,7 +26,7 @@
                         <Grid RowDefinitions="5*, 1*, 2*"
                               WidthRequest="400"
                               HeightRequest="300"
-                              Margin="0,0,0,10">
+                              Margin="30">
                             <Image Grid.Row="0"
                                    Source="{Binding ThumbnailUrl}"
                                    Aspect="AspectFill"
@@ -45,14 +45,13 @@
                                     Background="{DynamicResource OverlayGradient}"
                                     VerticalOptions="FillAndExpand"
                                     HorizontalOptions="FillAndExpand"
-                                    Grid.Row="0"
-                                    Opacity="0.3">
+                                    IsVisible="{Binding IsRestricted}"
+                                    Grid.Row="0">
                                 <Label HorizontalOptions="Center"
                                        VerticalOptions="Center"
                                        HorizontalTextAlignment="Center"
                                        FontSize="Header"
-                                       Text="🔒"
-                                       IsVisible="{Binding IsRestricted}"/>
+                                       Text="🔒"/>
                             </Border>
 
                             <Label Grid.Row="0"
