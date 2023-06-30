@@ -53,6 +53,11 @@ internal static class HostingExtensions
                 options.ClientSecret = "copy client secret from Google here";
             });
 
+        builder.Services.AddFido2(opt =>
+        {
+            //opt.
+        });
+
         var userCodeDescriptor = ServiceDescriptor.Transient<IUserCodeService, CustomUserCodeService>();
         builder.Services.Replace(userCodeDescriptor);
 
