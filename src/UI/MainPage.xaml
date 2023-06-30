@@ -27,15 +27,22 @@
                 <VerticalStackLayout Spacing="10"
                                      VerticalOptions="Center"
                                      HorizontalOptions="Center">
+                    <Label HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="Subtitle"
+                           Text="Go to"/>
                     <Label x:Name="UrlLabel"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
                            FontSize="Title"/>
-
+                    <Label HorizontalOptions="Center"
+                           VerticalOptions="Center"
+                           FontSize="Subtitle"
+                           Text="and enter the following code:"/>
                     <Label x:Name="CodeLabel"
                            HorizontalOptions="Center"
                            VerticalOptions="Center"
-                           FontSize="48" />
+                           FontSize="56" />
 
                     <Label HorizontalOptions="Center"
                            VerticalOptions="Center"

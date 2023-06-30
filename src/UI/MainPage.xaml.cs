@@ -24,13 +24,15 @@ public partial class MainPage : ContentPage
 
         var response = await _authService.GetUserCode().ConfigureAwait(true);
 
-        UrlLabel.Text = $"Go to {response.verification_uri} and enter the following code to sign in:";
+        UrlLabel.Text = response.verification_uri;
 
         CodeLabel.Text = response.user_code;
 
         _authUrl = response.verification_uri_complete;
 
         QrView.Value = _authUrl;
+
+        LoginIndicator.IsVisible = false;
         
         try
         {
@@ -38,15 +40,11 @@ public partial class MainPage : ContentPage
 
             _idToken = ParseToken(authResponse.id_token);
 
-            await Navigation.PushModalAsync<PlaylistsPage>();
+            await Navigation.PushAsync<PlaylistsPage>();
         }
         catch (Exception ex)
         {
             await DisplayAlert("Error", ex.Message, "OK");
-        }
-        finally
-        {
-            LoginIndicator.IsVisible = false;
         }
     }
 

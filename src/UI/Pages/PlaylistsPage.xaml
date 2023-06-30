@@ -19,45 +19,37 @@
                Text="Popular playlists"
                FontSize="Header"/>
 
-        <ScrollView Grid.Row="2">
-            <FlexLayout JustifyContent="SpaceEvenly"
-                        Wrap="Wrap"
-                        BindableLayout.ItemsSource="{Binding Playlists}">
-                <BindableLayout.ItemTemplate>
-                    <DataTemplate>
-                        <Grid RowDefinitions="5*, 1*, 2*"
+        <CollectionView ItemsSource="{Binding Playlists}"
+                        ItemsLayout="VerticalGrid, 4"
+                        SelectionChanged="CollectionView_SelectionChanged"
+                        SelectionMode="Single"
+                        SelectedItem="{Binding SelectedPlaylist}"
+                        Grid.Row="2">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Grid RowDefinitions="5*, 1*, 2*"
                               WidthRequest="400"
                               HeightRequest="300"
                               Margin="0,0,0,10">
-                            <Grid.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding Source={x:Reference ListPage}, Path=BindingContext.ViewPlaylistCommand}"
-                                                      CommandParameter="{Binding Id}"
-                                                      NumberOfTapsRequired="1" />
-                            </Grid.GestureRecognizers>
 
-                            <Image Grid.Row="0"
+                        <Image Grid.Row="0"
                                    Source="{Binding Thumbnail}"
                                    Aspect="AspectFill"
                                    VerticalOptions="FillAndExpand"
                                    HorizontalOptions="FillAndExpand">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={x:Reference ListPage}, Path=BindingContext.ViewPlaylistCommand}"
-                                                      CommandParameter="{Binding Id}"
-                                                      NumberOfTapsRequired="1" />
-                                </Image.GestureRecognizers>
-                            </Image>
+                        </Image>
 
-                            <Label Grid.Row="1"
+                        <Label Grid.Row="1"
                                    FontSize="Large"
                                    Text="{Binding Title}"/>
 
-                            <Label Grid.Row="2"
+                        <Label Grid.Row="2"
                                    Text="{Binding Description}"/>
-                        </Grid>
-                    </DataTemplate>
-                </BindableLayout.ItemTemplate>
-            </FlexLayout>
-        </ScrollView>
+                    </Grid>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+        
 
         <ActivityIndicator HorizontalOptions="Center"
                            VerticalOptions="Center"

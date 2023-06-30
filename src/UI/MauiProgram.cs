@@ -27,10 +27,7 @@ public static class MauiProgram
             DeviceCodeEndpoint = "connect/deviceauthorization",
             TokenEndpoint = "connect/token",
             Scopes = "dotnetflix-api",
-#if DEBUG            
-            BaseUrl = "https://localhost:5001/"
-#else
-#endif
+            BaseUrl = "https://dotnetflix-identity.azurewebsites.net/"//"https://localhost:5001/"
         });
 
 		builder.Services.AddSingleton<AuthHandler>();
@@ -39,7 +36,7 @@ public static class MauiProgram
 
 		builder.Services.AddHttpClient();
 
-		builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri("https://localhost:7132/"))
+		builder.Services.AddHttpClient(VideosService.VideosClient, client => client.BaseAddress = new Uri("https://dotnetflix-api.azurewebsites.net/"))
             .AddHttpMessageHandler((s) => s.GetService<AuthHandler>());
 
 		builder.Services.AddSingleton<VideosService>();

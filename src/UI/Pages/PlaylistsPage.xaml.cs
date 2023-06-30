@@ -8,10 +8,10 @@ namespace DotNetFlix.UI.Pages;
 public partial class PlaylistsPage : ContentPage
 {
     private readonly VideosService _videosService;
-
-    public ICommand ViewPlaylistCommand => new Command<string>(async (id) => await ViewPlaylist(id));
-
+    
     public ObservableCollection<Playlist> Playlists { get; set; } = new();
+
+    public Playlist SelectedPlaylist { get; set; }
 
     public PlaylistsPage(VideosService videosService)
 	{
@@ -51,10 +51,21 @@ public partial class PlaylistsPage : ContentPage
         }
     }
 
-    private async Task ViewPlaylist(string playlistId)
+    private async void CollectionView_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
-        await App.Current.MainPage.DisplayAlert(playlistId,"Showing playlist", "OK");
-        var title = Playlists.FirstOrDefault(p => p.Id == playlistId)?.Title;
-        await Navigation.PushAsync<VideosPage>(playlistId, title);
+        var playlist = e.CurrentSelection.FirstOrDefault() as Playlist;
+
+        if (playlist != null)
+        {
+            try
+            {
+                await Navigation.PushAsync<VideosPage>(playlist.Id, playlist.Title);
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+        }
     }
 }
