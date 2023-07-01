@@ -53,6 +53,8 @@ internal static class HostingExtensions
                 options.ClientSecret = "copy client secret from Google here";
             });
 
+        builder.Services.AddScoped<IFidoCredentialStore, FidoCredentialStore>();
+
         builder.Services.AddFido2(opt =>
         {
             //opt.
