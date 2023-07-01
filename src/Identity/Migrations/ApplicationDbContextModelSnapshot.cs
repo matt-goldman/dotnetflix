@@ -89,14 +89,18 @@ namespace DotNetFlix.Identity.Migrations
 
             modelBuilder.Entity("DotNetFlix.Identity.Models.FidoPublicKeyDescriptor", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("DescriptorId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DescriptorId"));
 
                     b.Property<int>("CredentialId")
                         .HasColumnType("int");
+
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("varbinary(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "id");
 
                     b.Property<string>("Transports")
                         .HasColumnType("nvarchar(max)")
@@ -106,7 +110,7 @@ namespace DotNetFlix.Identity.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("Relational:JsonPropertyName", "type");
 
-                    b.HasKey("Id");
+                    b.HasKey("DescriptorId");
 
                     b.HasIndex("CredentialId")
                         .IsUnique();
@@ -116,17 +120,38 @@ namespace DotNetFlix.Identity.Migrations
 
             modelBuilder.Entity("DotNetFlix.Identity.Models.FidoStoredCredential", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("CredentialId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CredentialId"));
 
                     b.Property<Guid>("AaGuid")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<byte[]>("AttestationClientDataJSON")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<byte[]>("AttestationObject")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<bool>("BE")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("BS")
+                        .HasColumnType("bit");
+
                     b.Property<string>("CredType")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte[]>("DevicePublicKeys")
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("FidoUserId")
+                        .HasColumnType("int");
+
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<byte[]>("PublicKey")
                         .HasColumnType("varbinary(max)");
@@ -134,8 +159,14 @@ namespace DotNetFlix.Identity.Migrations
                     b.Property<DateTime>("RegDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<long>("SignatureCounter")
+                    b.Property<long>("SignCount")
                         .HasColumnType("bigint");
+
+                    b.Property<string>("Transports")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.Property<byte[]>("UserHandle")
                         .HasColumnType("varbinary(max)");
@@ -143,23 +174,20 @@ namespace DotNetFlix.Identity.Migrations
                     b.Property<byte[]>("UserId")
                         .HasColumnType("varbinary(max)");
 
-                    b.Property<int?>("UserId1")
-                        .HasColumnType("int");
+                    b.HasKey("CredentialId");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId1");
+                    b.HasIndex("FidoUserId");
 
                     b.ToTable("FidoStoredCredentials");
                 });
 
             modelBuilder.Entity("DotNetFlix.Identity.Models.FidoUser", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("ApplicationUserId")
                         .HasColumnType("nvarchar(450)");
@@ -168,11 +196,15 @@ namespace DotNetFlix.Identity.Migrations
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "displayName");
 
+                    b.Property<byte[]>("Id")
+                        .HasColumnType("varbinary(max)")
+                        .HasAnnotation("Relational:JsonPropertyName", "id");
+
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)")
                         .HasAnnotation("Relational:JsonPropertyName", "name");
 
-                    b.HasKey("Id");
+                    b.HasKey("UserId");
 
                     b.HasIndex("ApplicationUserId")
                         .IsUnique()
@@ -327,20 +359,22 @@ namespace DotNetFlix.Identity.Migrations
 
             modelBuilder.Entity("DotNetFlix.Identity.Models.FidoStoredCredential", b =>
                 {
-                    b.HasOne("DotNetFlix.Identity.Models.FidoUser", "User")
+                    b.HasOne("DotNetFlix.Identity.Models.FidoUser", "FidoUser")
                         .WithMany("StoredCredentials")
-                        .HasForeignKey("UserId1");
+                        .HasForeignKey("FidoUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("FidoUser");
                 });
 
             modelBuilder.Entity("DotNetFlix.Identity.Models.FidoUser", b =>
                 {
-                    b.HasOne("DotNetFlix.Identity.Models.ApplicationUser", "User")
+                    b.HasOne("DotNetFlix.Identity.Models.ApplicationUser", "ApplicationUser")
                         .WithOne("FidoUser")
                         .HasForeignKey("DotNetFlix.Identity.Models.FidoUser", "ApplicationUserId");
 
-                    b.Navigation("User");
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

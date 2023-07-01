@@ -2,17 +2,17 @@
 using DotNetFlix.Identity.Services;
 using Duende.IdentityServer.Extensions;
 using Fido2NetLib;
-using Fido2NetLib.Development;
 using Fido2NetLib.Objects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using static Fido2NetLib.Fido2;
 
 namespace DotNetFlix.Identity.Controllers;
 
 public class WebAuthController : ControllerBase
 {
-    private static readonly IFidoCredentialStore _credentialStore;
+    private readonly IFidoCredentialStore _credentialStore;
     private readonly IFido2 _fido2;
 
     public WebAuthController(IFidoCredentialStore credentialStore, IFido2 fido2)
@@ -25,8 +25,6 @@ public class WebAuthController : ControllerBase
     [Authorize]
     [Route("/makeCredentialOptions")]
     public async Task<CredentialCreateOptions> MakeCredentialOptions(
-                                            [FromForm] string username,
-                                            [FromForm] string displayName,
                                             [FromForm] string attType,
                                             [FromForm] string authType,
                                             [FromForm] string residentKey,
@@ -34,19 +32,13 @@ public class WebAuthController : ControllerBase
     {
         try
         {
-
-            if (string.IsNullOrEmpty(username))
-            {
-                username = $"{displayName} (Usernameless user created at {DateTime.UtcNow})";
-            }
-
             var userId = User?.Identity.GetSubjectId();
 
             // 1. Get user from DB by username (in our example, auto create missing users)
             var user = await _credentialStore.GetOrAddUserAsync(userId);
 
             // 2. Get user existing keys by username
-            var existingKeys = await _credentialStore.GetKeyDescriptorsByUserHandleAsync(userId);
+            var existingKeys = await _credentialStore.GetKeyDescriptorsByUserIdAsync(userId);
 
             // 3. Create options
             var authenticatorSelection = new AuthenticatorSelection
@@ -70,6 +62,8 @@ public class WebAuthController : ControllerBase
 
             // 4. Temporarily store options, session/in-memory cache/redis/db
             HttpContext.Session.SetString("fido2.attestationOptions", options.ToJson());
+            var jsonUser = JsonSerializer.Serialize(user);
+            HttpContext.Session.SetString("fido2.attestationUser", jsonUser);
 
             // 5. return options to client
             return options;
@@ -90,25 +84,22 @@ public class WebAuthController : ControllerBase
             var jsonOptions = HttpContext.Session.GetString("fido2.attestationOptions");
             var options = CredentialCreateOptions.FromJson(jsonOptions);
 
+            // 2. Get the user we created
+            var jsonUser = HttpContext.Session.GetString("fido2.attestationUser");
+            var user = JsonSerializer.Deserialize<FidoUser>(jsonUser);
+            
             // 2. Create callback so that lib can verify credential id is unique to this user
-            IsCredentialIdUniqueToUserAsyncDelegate callback = static async (args, cancellationToken) =>
-            {
-                var users = await _credentialStore.GetUsersByCredentialIdAsync(args.CredentialId, cancellationToken);
-                if (users.Count > 0)
-                    return false;
-
-                return true;
-            };
+            var callback = CreateCallback();
 
             // 2. Verify and make the credentials
             var success = await _fido2.MakeNewCredentialAsync(attestationResponse, options, callback, cancellationToken: cancellationToken);
 
             // 3. Store the credentials in db
-            await _credentialStore.AddCredentialToUserAsync(options.User, new FidoStoredCredential
+            await _credentialStore.AddCredentialToUserAsync(user, new FidoStoredCredential
             {
                 Type = success.Result.Type,
-                Id = BitConverter.ToInt32(success.Result.Id, 0),
-                Descriptor = new PublicKeyCredentialDescriptor(success.Result.CredentialId),
+                Id = success.Result.Id,
+                Descriptor = new FidoPublicKeyDescriptor(success.Result.CredentialId),
                 PublicKey = success.Result.PublicKey,
                 UserHandle = success.Result.User.Id,
                 SignCount = success.Result.Counter,
@@ -134,19 +125,17 @@ public class WebAuthController : ControllerBase
 
     [HttpPost]
     [Route("/assertionOptions")]
-    public async Task<AssertionOptions> AssertionOptionsPost([FromForm] string username, [FromForm] string userVerification)
+    public async Task<AssertionOptions> AssertionOptionsPost([FromForm] string userVerification)
     {
         try
         {
-            var existingCredentials = new List<PublicKeyCredentialDescriptor>();
+            var existingCredentials = new List<FidoPublicKeyDescriptor>();
 
-            if (!string.IsNullOrEmpty(username))
+            var userId = User?.Identity.GetSubjectId();
+
+            if (userId is not null)
             {
-                // 1. Get user from DB
-                var user = DemoStorage.GetUser(username) ?? throw new ArgumentException("Username was not registered");
-
-                // 2. Get registered credentials from database
-                existingCredentials = DemoStorage.GetCredentialsByUser(user).Select(c => c.Descriptor).ToList();
+                existingCredentials = await _credentialStore.GetKeyDescriptorsByUserIdAsync(userId);
             }
 
             var exts = new AuthenticationExtensionsClientInputs()
@@ -187,24 +176,23 @@ public class WebAuthController : ControllerBase
             var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
             var options = AssertionOptions.FromJson(jsonOptions);
 
+            var jsonUser = HttpContext.Session.GetString("fido2.attestationUser");
+            var user = JsonSerializer.Deserialize<FidoUser>(jsonUser);
+
             // 2. Get registered credential from database
-            var creds = DemoStorage.GetCredentialById(clientResponse.Id) ?? throw new Exception("Unknown credentials");
+            var creds = await _credentialStore.GetCredentialByIdAsync(clientResponse.Id) ?? throw new Exception("Unknown credentials");
 
             // 3. Get credential counter from database
-            var storedCounter = creds.SignatureCounter;
+            var storedCounter = creds.SignCount;
 
             // 4. Create callback to check if userhandle owns the credentialId
-            IsUserHandleOwnerOfCredentialIdAsync callback = static async (args, cancellationToken) =>
-            {
-                var storedCreds = await DemoStorage.GetCredentialsByUserHandleAsync(args.UserHandle, cancellationToken);
-                return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
-            };
+            var callback = CreateCredentialCallback(user.ApplicationUserId);
 
             // 5. Make the assertion
             var res = await _fido2.MakeAssertionAsync(clientResponse, options, creds.PublicKey, creds.DevicePublicKeys, storedCounter, callback, cancellationToken: cancellationToken);
 
             // 6. Store the updated counter
-            DemoStorage.UpdateCounter(res.CredentialId, res.Counter);
+            await _credentialStore.UpdateCounterAsync(res.CredentialId, res.Counter);
 
             if (res.DevicePublicKey is not null)
                 creds.DevicePublicKeys.Add(res.DevicePublicKey);
@@ -221,5 +209,23 @@ public class WebAuthController : ControllerBase
     private string FormatException(Exception e)
     {
         return string.Format("{0}{1}", e.Message, e.InnerException != null ? " (" + e.InnerException.Message + ")" : "");
+    }
+
+    public IsCredentialIdUniqueToUserAsyncDelegate CreateCallback()
+    {
+        return async (args, cancellationToken) =>
+        {
+            var users = await _credentialStore.GetUsersByCredentialIdAsync(args.CredentialId, cancellationToken);
+            return users.Count == 0;
+        };
+    }
+
+    public IsUserHandleOwnerOfCredentialIdAsync CreateCredentialCallback(string userId)
+    {
+        return async (args, cancellationToken) =>
+        {
+            var storedCreds = await _credentialStore.GetCredentialsByUserHandleAsync(userId, cancellationToken);
+            return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
+        };
     }
 }

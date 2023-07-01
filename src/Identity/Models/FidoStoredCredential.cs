@@ -1,11 +1,13 @@
 ﻿using Fido2NetLib.Development;
-using Fido2NetLib.Objects;
 
 namespace DotNetFlix.Identity.Models;
 
 public class FidoStoredCredential : StoredCredential
 {
-    public int Id { get; set; }
+    public int CredentialId { get; set; }
     
-    public FidoUser User { get; set; }
+    public int FidoUserId { get; set; }
+    public FidoUser FidoUser { get; set; }
+
+    public new FidoPublicKeyDescriptor Descriptor { get; set; }
 }

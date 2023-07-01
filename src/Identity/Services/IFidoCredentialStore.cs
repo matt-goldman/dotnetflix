@@ -9,12 +9,12 @@ public interface IFidoCredentialStore
     
     Task<FidoUser?> GetUserAsync(string userId, CancellationToken cancellationToken = default);
         
-    Task<FidoStoredCredential?> GetCredentialByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<FidoStoredCredential?> GetCredentialByIdAsync(byte[] id, CancellationToken cancellationToken = default);
 
     Task<List<FidoStoredCredential>> GetCredentialsByUserHandleAsync(string userId, CancellationToken cancellationToken = default);
-    Task<List<PublicKeyCredentialDescriptor>> GetKeyDescriptorsByUserHandleAsync(string userId, CancellationToken cancellationToken = default);
+    Task<List<FidoPublicKeyDescriptor>> GetKeyDescriptorsByUserIdAsync(string userId, CancellationToken cancellationToken = default);
 
-    Task UpdateCounterAsync(int credentialId, uint counter, CancellationToken cancellationToken = default);
+    Task UpdateCounterAsync(byte[] credentialId, uint counter, CancellationToken cancellationToken = default);
     
     Task AddCredentialToUserAsync(FidoUser user, FidoStoredCredential credential, CancellationToken cancellationToken = default);
 

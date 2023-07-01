@@ -20,9 +20,9 @@ public class FidoCredentialStore : IFidoCredentialStore
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public async Task<FidoStoredCredential> GetCredentialByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<FidoStoredCredential> GetCredentialByIdAsync(byte[] id, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.FidoStoredCredentials.FindAsync(id, cancellationToken);
+        return await _dbContext.FidoStoredCredentials.FirstOrDefaultAsync(c => c.Id.SequenceEqual(id), cancellationToken);
     }
 
     public async Task<List<FidoStoredCredential>> GetCredentialsByUserHandleAsync(string userId, CancellationToken cancellationToken = default)
@@ -34,7 +34,7 @@ public class FidoCredentialStore : IFidoCredentialStore
         return user.StoredCredentials.ToList();
     }
 
-    public async Task<List<PublicKeyCredentialDescriptor>> GetKeyDescriptorsByUserHandleAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<List<FidoPublicKeyDescriptor>> GetKeyDescriptorsByUserIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.FidoUsers.Where(fu => fu.ApplicationUserId == userId)
             .SelectMany(fu => fu.StoredCredentials)
@@ -70,13 +70,13 @@ public class FidoCredentialStore : IFidoCredentialStore
     public async Task<List<FidoUser>> GetUsersByCredentialIdAsync(byte[] credentialId, CancellationToken cancellationToken = default)
     {
         return await _dbContext.FidoStoredCredentials.Where(c => c.Descriptor.Id == credentialId)
-            .Select(c => c.User)
+            .Select(c => c.FidoUser)
             .ToListAsync(cancellationToken);
 
         // AsNoTracking? Check whether result is updated.
     }
 
-    public async Task UpdateCounterAsync(int credentialId, uint counter, CancellationToken cancellationToken = default)
+    public async Task UpdateCounterAsync(byte[] credentialId, uint counter, CancellationToken cancellationToken = default)
     {
         var cred = await _dbContext.FidoStoredCredentials.FindAsync(credentialId, cancellationToken);
 
