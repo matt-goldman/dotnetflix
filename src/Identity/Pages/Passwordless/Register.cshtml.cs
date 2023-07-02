@@ -1,12 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace DotNetFlix.Identity.Pages.Passwordless
+namespace DotNetFlix.Identity.Pages.Passwordless;
+
+[Authorize]
+public class RegisterModel : PageModel
 {
-    public class RegisterModel : PageModel
+    public void OnGet()
     {
-        public void OnGet()
-        {
-        }
     }
 }

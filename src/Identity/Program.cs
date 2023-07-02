@@ -16,9 +16,35 @@ try
         .Enrich.FromLogContext()
         .ReadFrom.Configuration(ctx.Configuration));
 
+    builder.Services.AddControllers();
+
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddSession(options =>
+    {
+        // Set a short timeout for easy testing.
+        options.IdleTimeout = TimeSpan.FromMinutes(2);
+        options.Cookie.HttpOnly = true;
+        // Strict SameSite mode is required because the default mode used
+        // by ASP.NET Core 3 isn't understood by the Conformance Tool
+        // and breaks conformance testing
+        options.Cookie.SameSite = SameSiteMode.Unspecified;
+    });
+
     var app = builder
         .ConfigureServices()
         .ConfigurePipeline();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseSession();
+
+    app.MapControllers();
 
     // this seeding is only for the template to bootstrap the DB and users.
     // in production you will likely want a different approach.

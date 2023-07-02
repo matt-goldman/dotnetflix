@@ -1,4 +1,5 @@
 ﻿using DotNetFlix.Identity.Data;
+using DotNetFlix.Identity.Helpers;
 using DotNetFlix.Identity.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,15 +44,22 @@ public class FidoCredentialStore : IFidoCredentialStore
 
     public async Task<FidoUser> GetOrAddUserAsync(string userId, CancellationToken cancellationToken = default)
     {
-        var usr = await _dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
+        var usr = await _dbContext.Users
+            .Include(u => u.FidoUser)
+            .FirstOrDefaultAsync(u => u.Id == userId, cancellationToken);
 
         if (usr is null)
             throw new Exception($"User {userId} not found");
 
         if (usr.FidoUser is null)
         {
-            var user = new FidoUser();
+            var user = new FidoUser
+            {
+                DisplayName = usr.UserName,
+                Id = usr.Id.ToByteArray()
+            };
             usr.FidoUser = user;
+            await _dbContext.SaveChangesAsync(cancellationToken);
             return user;
         }
         else

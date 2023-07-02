@@ -6,11 +6,12 @@ using Fido2NetLib;
 using Fido2NetLib.Objects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
 using static Fido2NetLib.Fido2;
 
 namespace DotNetFlix.Identity.Controllers;
 
+[ApiController]
+[Authorize]
 public class RegistrationController : ControllerBase
 {
     private readonly IFidoCredentialStore _credentialStore;
@@ -23,7 +24,6 @@ public class RegistrationController : ControllerBase
     }
     
     [HttpPost]
-    [Authorize]
     [Route("/makeCredentialOptions")] // This route returns options to the browser that are passed to the navigator.credentials.create() method.
     public async Task<CredentialCreateOptions> MakeCredentialOptions(
                                             [FromForm] string attType,
@@ -61,10 +61,11 @@ public class RegistrationController : ControllerBase
 
             var options = _fido2.RequestNewCredential(user, existingKeys.Cast<PublicKeyCredentialDescriptor>().ToList(), authenticatorSelection, attType.ToEnum<AttestationConveyancePreference>(), exts);
 
+
             // 4. Temporarily store options, session/in-memory cache/redis/db
             HttpContext.Session.SetString("fido2.attestationOptions", options.ToJson());
-            var jsonUser = JsonSerializer.Serialize(user);
-            HttpContext.Session.SetString("fido2.attestationUser", jsonUser);
+            
+            HttpContext.Session.SetString("fido2.attestationUser", userId);
 
             // 5. return options to client
             return options;
@@ -77,7 +78,7 @@ public class RegistrationController : ControllerBase
 
     [HttpPost]
     [Route("/makeCredential")] // This route handles the response from the browser after the user has completed the navigator.credentials.create() method.
-    public async Task<CredentialMakeResult> MakeCredential([FromBody] AuthenticatorAttestationRawResponse attestationResponse, CancellationToken cancellationToken)
+    public async Task<ActionResult<CredentialMakeResult>> MakeCredential([FromBody] AuthenticatorAttestationRawResponse attestationResponse, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -86,8 +87,8 @@ public class RegistrationController : ControllerBase
             var options = CredentialCreateOptions.FromJson(jsonOptions);
 
             // 2. Get the user we created
-            var jsonUser = HttpContext.Session.GetString("fido2.attestationUser");
-            var user = JsonSerializer.Deserialize<FidoUser>(jsonUser);
+            var userId = HttpContext.Session.GetString("fido2.attestationUser");
+            var user = await _credentialStore.GetUserAsync(userId);
 
             // 2. Create callback so that lib can verify credential id is unique to this user
             var callback = CreateCallback();
@@ -124,7 +125,7 @@ public class RegistrationController : ControllerBase
         }
     }
 
-    public IsCredentialIdUniqueToUserAsyncDelegate CreateCallback()
+    private IsCredentialIdUniqueToUserAsyncDelegate CreateCallback()
     {
         return async (args, cancellationToken) =>
         {
