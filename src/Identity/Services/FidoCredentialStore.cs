@@ -56,6 +56,7 @@ public class FidoCredentialStore : IFidoCredentialStore
             var user = new FidoUser
             {
                 DisplayName = usr.UserName,
+                Name = usr.UserName,
                 Id = usr.Id.ToByteArray()
             };
             usr.FidoUser = user;
