@@ -6,6 +6,7 @@ using Fido2NetLib;
 using Fido2NetLib.Objects;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Text.Json.Serialization;
 using static Fido2NetLib.Fido2;
 
 namespace DotNetFlix.Identity.Controllers;
@@ -78,7 +79,7 @@ public class RegistrationController : ControllerBase
 
     [HttpPost]
     [Route("/makeCredential")] // This route handles the response from the browser after the user has completed the navigator.credentials.create() method.
-    public async Task<ActionResult<CredentialMakeResult>> MakeCredential([FromBody] AuthenticatorAttestationRawResponse attestationResponse, CancellationToken cancellationToken = default)
+    public async Task<ActionResult<CredentialMakeResult>> MakeCredential([FromBody] AttestationResponse attestationResponse, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -93,8 +94,21 @@ public class RegistrationController : ControllerBase
             // 2. Create callback so that lib can verify credential id is unique to this user
             var callback = CreateCallback();
 
+            var fidoResponse = new AuthenticatorAttestationRawResponse
+            {
+                Id = attestationResponse.Id,
+                RawId = attestationResponse.RawId,
+                Type = attestationResponse.Type,
+                Response = new AuthenticatorAttestationRawResponse.ResponseData
+                {
+                    AttestationObject = attestationResponse.Response.AttestationObject,
+                    ClientDataJson = attestationResponse.Response.ClientDataJson
+                },
+                Extensions = attestationResponse.Extensions
+            };
+
             // 2. Verify and make the credentials
-            var success = await _fido2.MakeNewCredentialAsync(attestationResponse, options, callback, cancellationToken: cancellationToken);
+            var success = await _fido2.MakeNewCredentialAsync(fidoResponse, options, callback, cancellationToken: cancellationToken);
 
             // 3. Store the credentials in db
             await _credentialStore.AddCredentialToUserAsync(user, new FidoStoredCredential
@@ -132,5 +146,52 @@ public class RegistrationController : ControllerBase
             var users = await _credentialStore.GetUsersByCredentialIdAsync(args.CredentialId, cancellationToken);
             return users.Count == 0;
         };
+    }
+}
+
+// This is required for the FIDO2 library to be able to deserialize the response from the browser.
+// The CredProps property is a bool, but the navigator.credentials.create() method returns an object.
+public class AuthenticationExtensionOutputs : AuthenticationExtensionsClientOutputs
+{
+    [JsonPropertyName("credProps")]
+    public new CredProps CredProps { get; set; }
+
+    
+}
+
+public class CredProps
+{
+    [JsonPropertyName("rk")]
+    public bool Rk { get; set; }
+}
+
+public class AttestationResponse
+{
+    [JsonConverter(typeof(Base64UrlConverter))]
+    [JsonPropertyName("id")]
+    public byte[] Id { get; set; }
+
+    [JsonConverter(typeof(Base64UrlConverter))]
+    [JsonPropertyName("rawId")]
+    public byte[] RawId { get; set; }
+
+    [JsonPropertyName("type")]
+    public PublicKeyCredentialType Type { get; set; } = PublicKeyCredentialType.PublicKey;
+
+    [JsonPropertyName("response")]
+    public ResponseData Response { get; set; }
+
+    [JsonPropertyName("extensions")]
+    public AuthenticationExtensionOutputs Extensions { get; set; }
+
+    public sealed class ResponseData
+    {
+        [JsonConverter(typeof(Base64UrlConverter))]
+        [JsonPropertyName("attestationObject")]
+        public byte[] AttestationObject { get; set; }
+
+        [JsonConverter(typeof(Base64UrlConverter))]
+        [JsonPropertyName("clientDataJSON")]
+        public byte[] ClientDataJson { get; set; }
     }
 }
