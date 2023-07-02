@@ -1,6 +1,5 @@
 ﻿using DotNetFlix.Identity.Data;
 using DotNetFlix.Identity.Models;
-using Fido2NetLib.Objects;
 using Microsoft.EntityFrameworkCore;
 
 namespace DotNetFlix.Identity.Services;
@@ -25,7 +24,7 @@ public class FidoCredentialStore : IFidoCredentialStore
         return await _dbContext.FidoStoredCredentials.FirstOrDefaultAsync(c => c.Id.SequenceEqual(id), cancellationToken);
     }
 
-    public async Task<List<FidoStoredCredential>> GetCredentialsByUserHandleAsync(string userId, CancellationToken cancellationToken = default)
+    public async Task<List<FidoStoredCredential>> GetCredentialsByUserIdAsync(string userId, CancellationToken cancellationToken = default)
     {
         var user = await _dbContext.FidoUsers
             // .AsNoTracking?? Checck whether the result is updated and/or stored
