@@ -1,4 +1,4 @@
-document.getElementById('signin').addEventListener('submit', handleSignInSubmit);
+document.getElementById('login').addEventListener('submit', handleSignInSubmit);
 
 async function handleSignInSubmit(event) {
     event.preventDefault();
@@ -22,7 +22,7 @@ async function handleSignInSubmit(event) {
 
         makeAssertionOptions = await res.json();
     } catch (e) {
-        showErrorAlert("Request to server failed", e);
+        showError("Request to server failed", e);
     }
 
     console.log("Assertion Options Object", makeAssertionOptions);
@@ -31,7 +31,7 @@ async function handleSignInSubmit(event) {
     if (makeAssertionOptions.status !== "ok") {
         console.log("Error creating assertion options");
         console.log(makeAssertionOptions.errorMessage);
-        showErrorAlert(makeAssertionOptions.errorMessage);
+        showError('Error', makeAssertionOptions.errorMessage);
         return;
     }
 
@@ -47,28 +47,30 @@ async function handleSignInSubmit(event) {
 
     console.log("Assertion options", makeAssertionOptions);
 
-    Swal.fire({
-        title: 'Logging In...',
-        text: 'Tap your security key to login.',
-        imageUrl: "/images/securitykey.min.svg",
-        showCancelButton: true,
-        showConfirmButton: false,
-        focusConfirm: false,
-        focusCancel: false
-    });
+    //Swal.fire({
+    //    title: 'Logging In...',
+    //    text: 'Tap your security key to login.',
+    //    imageUrl: "/images/securitykey.min.svg",
+    //    showCancelButton: true,
+    //    showConfirmButton: false,
+    //    focusConfirm: false,
+    //    focusCancel: false
+    //});
+
+    showSuccess('Logging In...', 'Tap your security key to login.', '/images/securitykey.min.svg');
 
     // ask browser for credentials (browser will ask connected authenticators)
     let credential;
     try {
         credential = await navigator.credentials.get({ publicKey: makeAssertionOptions })
     } catch (err) {
-        showErrorAlert(err.message ? err.message : err);
+        showError('Error', err.message ? err.message : err);
     }
 
     try {
         await verifyAssertionWithServer(credential);
     } catch (e) {
-        showErrorAlert("Could not verify assertion", e);
+        showError("Could not verify assertion", e);
     }
 }
 
@@ -110,7 +112,7 @@ async function verifyAssertionWithServer(assertedCredential) {
 
         response = await res.json();
     } catch (e) {
-        showErrorAlert("Request to server failed", e);
+        showError("Request to server failed", e);
         throw e;
     }
 
@@ -120,17 +122,19 @@ async function verifyAssertionWithServer(assertedCredential) {
     if (response.status !== "ok") {
         console.log("Error doing assertion");
         console.log(response.errorMessage);
-        showErrorAlert(response.errorMessage);
+        showError(response.errorMessage);
         return;
     }
 
     // show success message
-    Swal.fire({
-        title: 'Logged In!',
-        text: 'You\'re logged in successfully.',
-        type: 'success',
-        timer: 2000
-    });
+    //Swal.fire({
+    //    title: 'Logged In!',
+    //    text: 'You\'re logged in successfully.',
+    //    type: 'success',
+    //    timer: 2000
+    //});
+
+    showSuccess('Logged In!', 'You\'re logged in successfully.', null, 2000);
 
     // redirect?
     //window.location.href = "/dashboard/" + state.user.displayName;

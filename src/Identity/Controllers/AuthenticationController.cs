@@ -3,12 +3,15 @@ using DotNetFlix.Identity.Models;
 using DotNetFlix.Identity.Services;
 using Fido2NetLib;
 using Fido2NetLib.Objects;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace DotNetFlix.Identity.Controllers;
 
+[ApiController]
+[AllowAnonymous]
 public class AuthenticationController : ControllerBase
 {
     private readonly IFidoCredentialStore _credentialStore;
@@ -112,7 +115,7 @@ public class AuthenticationController : ControllerBase
         }
     }
 
-    public IsUserHandleOwnerOfCredentialIdAsync CreateCredentialCallback(string userId)
+    private IsUserHandleOwnerOfCredentialIdAsync CreateCredentialCallback(string userId)
     {
         return async (args, cancellationToken) =>
         {

@@ -61,15 +61,17 @@ async function handleRegisterSubmit(event) {
 
     console.log("Credential Options Formatted", makeCredentialOptions);
 
-    Swal.fire({
-        title: 'Registering...',
-        text: 'Tap your security key to finish registration.',
-        imageUrl: "/images/securitykey.min.svg",
-        showCancelButton: true,
-        showConfirmButton: false,
-        focusConfirm: false,
-        focusCancel: false
-    });
+    //Swal.fire({
+    //    title: 'Registering...',
+    //    text: 'Tap your security key to finish registration.',
+    //    imageUrl: "/images/securitykey.min.svg",
+    //    showCancelButton: true,
+    //    showConfirmButton: false,
+    //    focusConfirm: false,
+    //    focusCancel: false
+    //});
+
+    showSuccess('Registering...', 'Tap your security key to finish registration.', '/images/securitykey.min.svg');
 
 
     console.log("Creating PublicKeyCredential...");
@@ -82,7 +84,8 @@ async function handleRegisterSubmit(event) {
     } catch (e) {
         var msg = "Could not create credentials in browser. Probably because the username is already registered with your authenticator. Please change username or authenticator."
         console.error(msg, e);
-        showErrorAlert(msg, e);
+        //showErrorAlert(msg, e);
+        showError(msg, e);
     }
 
 
@@ -92,7 +95,8 @@ async function handleRegisterSubmit(event) {
         registerNewCredential(newCredential);
 
     } catch (e) {
-        showErrorAlert(err.message ? err.message : err);
+        //showErrorAlert(err.message ? err.message : err);
+        showError(err.message ? err.message : err);
     }
 }
 
@@ -133,7 +137,7 @@ async function registerNewCredential(newCredential) {
     try {
         response = await registerCredentialWithServer(data);
     } catch (e) {
-        showErrorAlert(e);
+        showError('Error', e);
     }
 
     console.log("Credential Object", response);
@@ -142,17 +146,19 @@ async function registerNewCredential(newCredential) {
     if (response.status !== "ok") {
         console.log("Error creating credential");
         console.log(response.errorMessage);
-        showErrorAlert(response.errorMessage);
+        showError('Error', response.errorMessage);
         return;
     }
 
     // show success 
-    Swal.fire({
-        title: 'Registration Successful!',
-        text: 'You\'ve registered successfully.',
-        type: 'success',
-        timer: 2000
-    });
+    //Swal.fire({
+    //    title: 'Registration Successful!',
+    //    text: 'You\'ve registered successfully.',
+    //    type: 'success',
+    //    timer: 2000
+    //});
+
+    showSuccess('Registration Successful!', 'You\'ve registered successfully.', null, 2000);
 
     // redirect to dashboard?
     //window.location.href = "/dashboard/" + state.user.displayName;
