@@ -1,4 +1,6 @@
 ﻿using DotNetFlix.Identity;
+using DotNetFlix.Identity.Data;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -57,6 +59,12 @@ try
     }
 
     app.UseMigrationsEndPoint();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+        await dbContext.Database.MigrateAsync();
+    }
 
     app.Run();
 }
