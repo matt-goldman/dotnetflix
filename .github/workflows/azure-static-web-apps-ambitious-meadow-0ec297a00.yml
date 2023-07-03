@@ -26,9 +26,7 @@ jobs:
 
   build_and_deploy_job:
     needs: changes
-    if: |
-      github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') &&
-      ${{ needs.changes.outputs.src == 'true' }}
+    if: github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.action != 'closed') && ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-latest
     name: Build and Deploy Job
     steps:
@@ -51,8 +49,7 @@ jobs:
 
   close_pull_request_job:
     needs: changes
-    if: |
-      github.event_name == 'pull_request' && github.event.action == 'closed' && ${{ needs.changes.outputs.src == 'true' }}
+    if: github.event_name == 'pull_request' && github.event.action == 'closed' && ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-latest
     name: Close Pull Request Job
     steps:
