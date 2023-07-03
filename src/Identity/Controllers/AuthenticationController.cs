@@ -120,41 +120,7 @@ public class AuthenticationController : ControllerBase
         return async (args, cancellationToken) =>
         {
             var storedCreds = await _credentialStore.GetCredentialsByUserIdAsync(userId, cancellationToken);
-
-            if (storedCreds is null)
-                throw new Exception("Stored creds is null");
-
-            if (args.CredentialId is null)
-                throw new Exception("CredentialId is null");
-
-            //var exists = storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
-            //return exists;
-            bool exists = false;
-
-            for (int i = 0; i < storedCreds.Count; i++)
-            {
-                var c = storedCreds[i];
-
-                if (c?.Descriptor?.Id == null)
-                {
-                    Console.WriteLine($"Null element at index {i} in storedCreds");
-                    continue;
-                }
-
-                if (args.CredentialId == null)
-                {
-                    Console.WriteLine("args.CredentialId is null");
-                    break;
-                }
-
-                if (c.Descriptor.Id.SequenceEqual(args.CredentialId))
-                {
-                    exists = true;
-                    break;
-                }
-            }
-
-            return exists;
+            return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
         };
     }
 }

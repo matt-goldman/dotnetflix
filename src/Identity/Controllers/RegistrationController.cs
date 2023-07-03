@@ -115,7 +115,7 @@ public class RegistrationController : ControllerBase
             {
                 Type = success.Result.Type,
                 Id = success.Result.Id,
-                Descriptor = new FidoPublicKeyDescriptor(success.Result.CredentialId),
+                Descriptor = new FidoPublicKeyDescriptor(success.Result.Id),
                 PublicKey = success.Result.PublicKey,
                 UserHandle = success.Result.User.Id,
                 SignCount = success.Result.Counter,

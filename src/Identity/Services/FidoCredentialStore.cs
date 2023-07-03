@@ -24,6 +24,7 @@ public class FidoCredentialStore : IFidoCredentialStore
     {
         return await _dbContext.FidoStoredCredentials
             .Include(c => c.FidoUser)
+                .ThenInclude(fu => fu.ApplicationUser)
             .Include(c => c.Descriptor)
             .FirstOrDefaultAsync(c => c.Id.SequenceEqual(id), cancellationToken);
     }
@@ -89,7 +90,7 @@ public class FidoCredentialStore : IFidoCredentialStore
 
     public async Task UpdateCounterAsync(byte[] credentialId, uint counter, CancellationToken cancellationToken = default)
     {
-        var cred = await _dbContext.FidoStoredCredentials.FindAsync(credentialId, cancellationToken);
+        var cred = await _dbContext.FidoStoredCredentials.FirstOrDefaultAsync(c => c.Id == credentialId, cancellationToken);
 
         cred.SignCount = counter;
 
