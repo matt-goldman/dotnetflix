@@ -1,7 +1,32 @@
-document.getElementById('login').addEventListener('submit', handleSignInSubmit);
+//document.getElementById('login').addEventListener('submit', handleSignInSubmit);
+
+document.getElementById('passwordless-login').style.display = 'none';
+
+// Add a secret key combo to unhide the passwordless login button
+document.addEventListener('keydown', function (e) {
+    // keyCode 80 represents 'P', ctrlKey checks if 'ctrl' is pressed and altKey checks for 'alt'
+    if (e.keyCode == 80 && e.ctrlKey && e.altKey) {
+        // prevent default browser action
+        e.preventDefault();
+        // your code here to unhide HTML element
+
+        console.log('You entered the secret code! Showing the passwordless login button.');
+
+        let element = document.getElementById('passwordless-login');
+        if (element) {
+            element.style.display = 'inline-block';
+        }
+    }
+});
+
+document.getElementById('passwordless-login').addEventListener('click', function (event) {
+    event.preventDefault();
+    handleSignInSubmit();
+});
+
 
 async function handleSignInSubmit(event) {
-    event.preventDefault();
+    //event.preventDefault();
 
     //let username = this.username.value;
 
@@ -135,6 +160,28 @@ async function verifyAssertionWithServer(assertedCredential) {
     //});
 
     showSuccess('Logged In!', 'You\'re logged in successfully.', null, 2000);
+
+    // Now that the user is logged in, refresh the page
+    // When you hit IdentityServer's login page and you are logged in, you will just be redirected back to the RP with an authorization code
+    // after successful response from makeAssertion endpoint
+    setTimeout(function () {
+        // Get ReturnUrl from URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get('ReturnUrl');
+
+        if (returnUrl) {
+            // Decode the ReturnUrl to get the actual URL
+            const decodedUrl = decodeURIComponent(returnUrl);
+
+            // Redirect to the decoded URL
+            window.location.href = decodedUrl;
+        } else {
+            // Fallback - refresh page if no ReturnUrl found
+            location.reload(true);
+        }
+    }, 2000);
+
+
 
     // redirect?
     //window.location.href = "/dashboard/" + state.user.displayName;

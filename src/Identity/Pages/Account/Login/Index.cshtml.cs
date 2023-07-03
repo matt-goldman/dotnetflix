@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.Security.Policy;
 using System.Web;
+using Duende.IdentityServer.Extensions;
 
 namespace DotNetFlix.Identity.Pages.Login;
 
