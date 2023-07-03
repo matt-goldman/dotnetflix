@@ -10,8 +10,23 @@ env:
   DOTNET_CORE_VERSION: 7.0.x
   WORKING_DIRECTORY: src/Identity
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            src:
+              - 'src/Identity/*'
+              - 'src/Identity/**/*'
+
   build:
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
     steps:
     - uses: actions/checkout@v3
     - name: Setup .NET SDK
