@@ -79,34 +79,34 @@ public class AuthenticationController : ControllerBase
             var jsonOptions = HttpContext.Session.GetString("fido2.assertionOptions");
             var options = AssertionOptions.FromJson(jsonOptions);
 
-            var jsonUser = HttpContext.Session.GetString("fido2.attestationUser");
-            var user = JsonSerializer.Deserialize<FidoUser>(jsonUser);
-
             // 2. Get registered credential from database
             var creds = await _credentialStore.GetCredentialByIdAsync(clientResponse.Id) ?? throw new Exception("Unknown credentials");
 
             // 3. Get credential counter from database
             var storedCounter = creds.SignCount;
 
-            // 4. Create callback to check if userhandle owns the credentialId
-            var callback = CreateCredentialCallback(user.ApplicationUserId);
+            // 4. Get the user associated with the credential
+            
+            
+            // 5. Create callback to check if userhandle owns the credentialId
+            var callback = CreateCredentialCallback(creds.FidoUser.ApplicationUserId);
 
-            // 5. Make the assertion
+            // 6. Make the assertion
             // NOTE: This method will throw an exception if the WebAuthN authentication fails.
             var res = await _fido2.MakeAssertionAsync(clientResponse, options, creds.PublicKey, creds.DevicePublicKeys, storedCounter, callback, cancellationToken: cancellationToken);
 
-            // 6. Store the updated counter
+            // 7. Store the updated counter
             await _credentialStore.UpdateCounterAsync(res.CredentialId, res.Counter);
 
             if (res.DevicePublicKey is not null)
                 creds.DevicePublicKeys.Add(res.DevicePublicKey);
 
-            // 7. If we've got this far without an exception, the assertion is valid
+            // 8. If we've got this far without an exception, the assertion is valid
             // Sign the user in. This gives them a cookie, and means that now they
             // can obtain a token via standard OIDC processes.
             await _signInManager.SignInAsync(creds.FidoUser.ApplicationUser, true);
 
-            // 8. return OK to client
+            // 9. return OK to client
             return res;
         }
         catch (Exception e)
@@ -120,7 +120,41 @@ public class AuthenticationController : ControllerBase
         return async (args, cancellationToken) =>
         {
             var storedCreds = await _credentialStore.GetCredentialsByUserIdAsync(userId, cancellationToken);
-            return storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
+
+            if (storedCreds is null)
+                throw new Exception("Stored creds is null");
+
+            if (args.CredentialId is null)
+                throw new Exception("CredentialId is null");
+
+            //var exists = storedCreds.Exists(c => c.Descriptor.Id.SequenceEqual(args.CredentialId));
+            //return exists;
+            bool exists = false;
+
+            for (int i = 0; i < storedCreds.Count; i++)
+            {
+                var c = storedCreds[i];
+
+                if (c?.Descriptor?.Id == null)
+                {
+                    Console.WriteLine($"Null element at index {i} in storedCreds");
+                    continue;
+                }
+
+                if (args.CredentialId == null)
+                {
+                    Console.WriteLine("args.CredentialId is null");
+                    break;
+                }
+
+                if (c.Descriptor.Id.SequenceEqual(args.CredentialId))
+                {
+                    exists = true;
+                    break;
+                }
+            }
+
+            return exists;
         };
     }
 }

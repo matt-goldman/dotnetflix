@@ -22,7 +22,10 @@ public class FidoCredentialStore : IFidoCredentialStore
 
     public async Task<FidoStoredCredential> GetCredentialByIdAsync(byte[] id, CancellationToken cancellationToken = default)
     {
-        return await _dbContext.FidoStoredCredentials.FirstOrDefaultAsync(c => c.Id.SequenceEqual(id), cancellationToken);
+        return await _dbContext.FidoStoredCredentials
+            .Include(c => c.FidoUser)
+            .Include(c => c.Descriptor)
+            .FirstOrDefaultAsync(c => c.Id.SequenceEqual(id), cancellationToken);
     }
 
     public async Task<List<FidoStoredCredential>> GetCredentialsByUserIdAsync(string userId, CancellationToken cancellationToken = default)

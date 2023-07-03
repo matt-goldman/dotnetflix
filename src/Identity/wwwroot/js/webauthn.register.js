@@ -34,7 +34,7 @@ async function handleRegisterSubmit(event) {
     } catch (e) {
         console.error(e);
         let msg = "Something went really wrong";
-        showErrorAlert(msg);
+        showError(msg);
     }
 
 
@@ -43,7 +43,7 @@ async function handleRegisterSubmit(event) {
     if (makeCredentialOptions.status !== "ok") {
         console.log("Error creating credential options");
         console.log(makeCredentialOptions.errorMessage);
-        showErrorAlert(makeCredentialOptions.errorMessage);
+        showError(makeCredentialOptions.errorMessage);
         return;
     }
 

@@ -1,8 +1,8 @@
 function showError(title, message, image, timer) {
     if (title) {
-        $('#errorModalTitle').text(title);
+        $('#errorModalLabel').text(title);
     } else {
-        $('#errorModalTitle').text('Error');
+        $('#errorModalLabel').text('Error');
     }
 
     if (image) {
@@ -24,9 +24,9 @@ function showError(title, message, image, timer) {
 
 function showSuccess(title, message, image, timer) {
     if (title) {
-        $('#successModalTitle').text(title);
+        $('#successModalLabel').text(title);
     } else {
-        $('#successModalTitle').text('Success!');
+        $('#successModalLabel').text('Success!');
     }
     
     if (image) {
