@@ -1,5 +1,3 @@
-//document.getElementById('login').addEventListener('submit', handleSignInSubmit);
-
 document.getElementById('passwordless-login').style.display = 'none';
 
 // Add a secret key combo to unhide the passwordless login button
@@ -71,16 +69,7 @@ async function handleSignInSubmit(event) {
     });
 
     console.log("Assertion options", makeAssertionOptions);
-
-    //Swal.fire({
-    //    title: 'Logging In...',
-    //    text: 'Tap your security key to login.',
-    //    imageUrl: "/images/securitykey.min.svg",
-    //    showCancelButton: true,
-    //    showConfirmButton: false,
-    //    focusConfirm: false,
-    //    focusCancel: false
-    //});
+    
 
     showSuccess('Logging In...', 'Tap your security key to login.', '/images/securitykey.min.svg');
 
@@ -151,14 +140,6 @@ async function verifyAssertionWithServer(assertedCredential) {
         return;
     }
 
-    // show success message
-    //Swal.fire({
-    //    title: 'Logged In!',
-    //    text: 'You\'re logged in successfully.',
-    //    type: 'success',
-    //    timer: 2000
-    //});
-
     showSuccess('Logged In!', 'You\'re logged in successfully.', null, 2000);
 
     // Now that the user is logged in, refresh the page
@@ -180,9 +161,7 @@ async function verifyAssertionWithServer(assertedCredential) {
             location.reload(true);
         }
     }, 2000);
-
-
-
+    
     // redirect?
     //window.location.href = "/dashboard/" + state.user.displayName;
 }
