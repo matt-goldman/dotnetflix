@@ -1,0 +1,29 @@
+﻿@page
+@model DotNetFlix.Identity.Pages.Passwordless.Index
+
+<div class="login-page">
+
+    <partial name="_ValidationSummary" />
+    <div class="row m-4">
+        <div class="col-8">
+            <img src="/dnf_logo.png" class="img-fluid" />
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="card acrylic position-relative-md top-50 start-50-md">
+
+                <div class="card-body">
+                    <form id="login">
+                        
+                        <button class="btn btn-primary m-2 mt-5" name="Input.Button" value="login">Passwordless Login</button>
+                        
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/webauthn.login.js"></script>

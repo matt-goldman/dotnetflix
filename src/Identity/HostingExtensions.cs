@@ -3,11 +3,13 @@ using DotNetFlix.Identity.Models;
 using DotNetFlix.Identity.Services;
 using Duende.IdentityServer;
 using Duende.IdentityServer.Services;
+using Fido2NetLib;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Serilog;
+using System.Configuration;
 
 namespace DotNetFlix.Identity;
 
@@ -52,6 +54,30 @@ internal static class HostingExtensions
                 options.ClientId = "copy client ID from Google here";
                 options.ClientSecret = "copy client secret from Google here";
             });
+
+        builder.Services.AddScoped<IFidoCredentialStore, FidoCredentialStore>();
+
+        var fidoConfig = new Fido2Configuration();
+
+        builder.Configuration.Bind(nameof(Fido2Configuration), fidoConfig);
+        
+        builder.Services.AddFido2(options =>
+        {
+            options.ServerDomain = fidoConfig.ServerDomain;
+            options.ServerName = fidoConfig.ServerName;
+            options.Origins = fidoConfig.Origins;
+            options.TimestampDriftTolerance = fidoConfig.TimestampDriftTolerance;
+            options.MDSCacheDirPath = fidoConfig.MDSCacheDirPath;
+            options.BackupEligibleCredentialPolicy = fidoConfig.BackupEligibleCredentialPolicy;
+            options.BackedUpCredentialPolicy = fidoConfig.BackupEligibleCredentialPolicy;
+        })
+        .AddCachedMetadataService(config =>
+        {
+            config.AddFidoMetadataRepository(httpClientBuilder =>
+            {
+                //TODO: any specific config you want for accessing the MDS
+            });
+        });
 
         var userCodeDescriptor = ServiceDescriptor.Transient<IUserCodeService, CustomUserCodeService>();
         builder.Services.Replace(userCodeDescriptor);
