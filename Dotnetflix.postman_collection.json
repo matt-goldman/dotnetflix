@@ -1,0 +1,250 @@
+{
+	"info": {
+		"_postman_id": "a4ee5a8b-e6be-4d33-85d2-86424abaffe2",
+		"name": "Dotnetflix",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2119336"
+	},
+	"item": [
+		{
+			"name": "1. Get Device Code and User Code",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let resp = pm.response.json();\r",
+							"pm.environment.set(\"device_code\", resp.device_code);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "device",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "dotnetflix-api profile openid offline_access",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{identity}}/connect/deviceauthorization",
+					"host": [
+						"{{identity}}"
+					],
+					"path": [
+						"connect",
+						"deviceauthorization"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2. Get Device Code Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let resp = pm.response.json();\r",
+							"pm.environment.set(\"access_token\", resp.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "device",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "urn:ietf:params:oauth:grant-type:device_code",
+							"type": "text"
+						},
+						{
+							"key": "device_code",
+							"value": "{{device_code}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{identity}}/connect/token",
+					"host": [
+						"{{identity}}"
+					],
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3. Get Playlists",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/Videos/playlists",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"Videos",
+						"playlists"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4. Get Videos",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{api}}/Videos/playlists/{id}",
+					"host": [
+						"{{api}}"
+					],
+					"path": [
+						"Videos",
+						"playlists",
+						"{id}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5. Get Client Credentials Token",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "subscriptions.client",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "11145535-2CE4-4B89-9C94-45DD8EA994E5",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "subscriptions-api",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "client_credentials",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{identity}}/connect/token",
+					"host": [
+						"{{identity}}"
+					],
+					"path": [
+						"connect",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6. Get Subscriptions",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let resp = pm.response.json();\r",
+							"pm.environment.set(\"access_token\", resp.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{subscriptions}}/subscription?subscriberName={subscriberName}",
+					"host": [
+						"{{subscriptions}}"
+					],
+					"path": [
+						"subscription"
+					],
+					"query": [
+						{
+							"key": "subscriberName",
+							"value": "{subscriberName}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
