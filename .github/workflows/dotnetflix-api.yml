@@ -10,7 +10,21 @@ env:
   DOTNET_CORE_VERSION: 7.0.x
   WORKING_DIRECTORY: src/API
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      src: ${{ steps.filter.outputs.src }}
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            src:
+              - 'src/API/*'
+              - 'src/API/**/*'
   build:
+    needs: changes
+    if: ${{ needs.changes.outputs.src == 'true' }}
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
