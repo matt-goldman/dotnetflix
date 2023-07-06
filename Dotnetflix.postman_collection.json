@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "a4ee5a8b-e6be-4d33-85d2-86424abaffe2",
+		"_postman_id": "6ae17c2b-55d5-44de-97e0-a08db9e71aed",
 		"name": "Dotnetflix",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "2119336"
@@ -28,13 +28,19 @@
 					"urlencoded": [
 						{
 							"key": "client_id",
-							"value": "device",
+							"value": "dotnetflix-client",
 							"type": "text"
 						},
 						{
 							"key": "scope",
 							"value": "dotnetflix-api profile openid offline_access",
 							"type": "text"
+						},
+						{
+							"key": "",
+							"value": "",
+							"type": "text",
+							"disabled": true
 						}
 					]
 				},
@@ -73,7 +79,7 @@
 					"urlencoded": [
 						{
 							"key": "client_id",
-							"value": "device",
+							"value": "dotnetflix-client",
 							"type": "text"
 						},
 						{
@@ -160,6 +166,18 @@
 		},
 		{
 			"name": "5. Get Client Credentials Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let resp = pm.response.json();\r",
+							"pm.environment.set(\"access_token\", resp.access_token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
 			"request": {
 				"method": "POST",
 				"header": [],
@@ -208,8 +226,7 @@
 					"listen": "test",
 					"script": {
 						"exec": [
-							"let resp = pm.response.json();\r",
-							"pm.environment.set(\"access_token\", resp.access_token);"
+							""
 						],
 						"type": "text/javascript"
 					}
