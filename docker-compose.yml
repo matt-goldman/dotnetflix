@@ -11,9 +11,11 @@ services:
       - "1433"
 
   identityserver:
-    build: ./Identity
+    build: ./src/Identity
     ports:
       - '5001:5001'
+    depends_on:
+      - db
     environment:
       - ConnectionStrings__DefaultConnection="Server=localhost;Database=DotnetflixDB;User Id=sa;Password=${DB_PASSWORD};"
       - Fido2Configuration__serverDomain=localhost

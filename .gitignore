@@ -478,3 +478,4 @@ $RECYCLE.BIN/
 
 */.meteor/*
 src/UI/.meteor*
+.vscode/*
