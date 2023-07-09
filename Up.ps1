@@ -24,6 +24,10 @@ if (-not(Test-Path $certPath)) {
     exit -1
 }
 
+# copy the certs into the Blazor folder for use by nginx
+New-Item ./src/WebUI/certs/ -ItemType Directory -Force
+Copy-Item $certPath ./src/WebUI/certs/localhost.pfx
+
 # Spin up your Docker Compose services
 docker-compose up -d
 
