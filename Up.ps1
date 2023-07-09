@@ -1,8 +1,28 @@
 # Generate a random SA password
-$saPassword = New-Guid
+$saPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
+$certPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
 
 # Set the SA password as an environment variable
-$env:SA_PASSWORD = $saPassword.ToString()
+$env:SA_PASSWORD = $saPassword
+$env:CERT_PASSWORD = $certPassword
+
+# Get the path to dotnet dev-certs and set in environment variable
+if ($IsWindows) {
+    $env:DEVCERTS_PATH = "${env:USERPROFILE}\.aspnet\https"
+}
+elseif ($IsLinux -or $IsMacOS) {
+    $env:DEVCERTS_PATH = "${env:HOME}/.aspnet/https"
+}
+
+$certPath = Join-Path -Path $env:DEVCERTS_PATH -ChildPath "aspnetapp.pfx"
+
+dotnet dev-certs https -ep $certPath -p $certPassword
+dotnet dev-certs https --trust
+
+if (-not(Test-Path $certPath)) {
+    Write-Error "dotnet dev-certs not found at $certPath"
+    exit -1
+}
 
 # Spin up your Docker Compose services
 docker-compose up -d
@@ -12,7 +32,7 @@ docker-compose up -d
 Start-Sleep -s 30
 
 # Run your Postman collection
-newman run ./Dotnetflix.postman_collection.json -e ./Dotnetflix-docker-environment.json
+# newman run ./Dotnetflix.postman_collection.json -e ./Dotnetflix-docker-environment.json
 
 # Tear down the services after tests are done
-docker-compose down
+#docker-compose down

@@ -5,18 +5,23 @@ services:
   db:
     image: mcr.microsoft.com/azure-sql-edge
     environment:
-      SA_PASSWORD: ${SA_PASSWORD}
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
       ACCEPT_EULA: "Y"
     ports:
       - "1433"
 
   identityserver:
+    image: dotnetflix-identity
     build: ./src/Identity
     ports:
       - '5001:5001'
     depends_on:
       - db
     environment:
-      - ConnectionStrings__DefaultConnection="Server=localhost;Database=DotnetflixDB;User Id=sa;Password=${DB_PASSWORD};"
+      - ConnectionStrings__DefaultConnection=Server=db;Database=DotnetflixDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;Encrypt=true
       - Fido2Configuration__serverDomain=localhost
       - Fido2Configuration__origins=https://localhost:5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+    volumes:
+      - ${DEVCERTS_PATH}:/https:ro
