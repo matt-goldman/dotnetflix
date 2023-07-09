@@ -2,7 +2,7 @@ FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 EXPOSE 5004
 
-ENV ASPNETCORE_URLS=http://+:5004
+ENV ASPNETCORE_URLS=https://+:5004
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-dotnet-configure-containers
@@ -11,10 +11,11 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["src/DotNetFlix.SubscriptionService/DotNetFlix.SubscriptionService.csproj", "src/DotNetFlix.SubscriptionService/"]
-RUN dotnet restore "src/DotNetFlix.SubscriptionService/DotNetFlix.SubscriptionService.csproj"
+COPY ["DotNetFlix.SubscriptionService.csproj", "./"]
+
+RUN dotnet restore "DotNetFlix.SubscriptionService.csproj"
 COPY . .
-WORKDIR "/src/src/DotNetFlix.SubscriptionService"
+
 RUN dotnet build "DotNetFlix.SubscriptionService.csproj" -c Release -o /app/build
 
 FROM build AS publish

@@ -25,3 +25,55 @@ services:
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
     volumes:
       - ${DEVCERTS_PATH}:/https:ro
+
+  api:
+    image: dotnetflix-api
+    build: ./src/API
+    ports:
+      - '5002:5002'
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - Authority=https://identityserver:5001
+      - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
+      - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
+    volumes:
+      - ${DEVCERTS_PATH}:/https:ro
+
+  videos:
+    image: dotnetflix-videos
+    build: ./src/DotNetFlix.VideoService
+    ports:
+      - '5003:5003'
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
+    volumes:
+      - ${DEVCERTS_PATH}:/https:ro
+  
+  subscriptions:
+    image: dotnetflix-subscriptions
+    build: ./src/DotNetFlix.SubscriptionService
+    ports:
+      - '5004:5004'
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
+    volumes:
+      - ${DEVCERTS_PATH}:/https:ro
+
+  web:
+    image: dotnetflix-web
+    build: ./src/WebUI
+    ports:
+      - '5005:5005'
+    environment:
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - Authority=https://identityserver:5001
+      - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
+      - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
+    volumes:
+      - ${DEVCERTS_PATH}:/https:ro

@@ -45,7 +45,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:7009", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net");
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5005", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net");
     });
 });
 
