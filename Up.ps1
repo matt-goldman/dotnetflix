@@ -1,32 +1,42 @@
-# Generate a random SA password
-$saPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
-$certPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
+# check for a docker environment file
+# also, if the .env file has been created, the certs will also have been created
+if (-not(Test-Path "./.env")) {
+    # no env file found, so create one
 
-# Set the SA password as an environment variable
-$env:SA_PASSWORD = $saPassword
-$env:CERT_PASSWORD = $certPassword
+    # Generate a random SA password
+    $saPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
+    $certPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
 
-# Get the path to dotnet dev-certs and set in environment variable
-if ($IsWindows) {
-    $env:DEVCERTS_PATH = "${env:USERPROFILE}\.aspnet\https"
+    # Write the passwords to the .env file
+    "SA_PASSWORD=$saPassword" | Out-File -FilePath .env -Append
+    "CERT_PASSWORD=$certPassword" | Out-File -FilePath .env -Append
+
+    # Create the certs
+    if (-not(Test-Path "./certs")) {
+        New-Item ./certs/ -type Directory
+    }
+
+    Move-Item ./v3.ext ./certs/v3.ext
+
+    docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c "apt-get update && apt-get install -y openssl && openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost' -extensions v3_req -config /certs/v3.ext && openssl pkcs12 -export -out /certs/cert.pfx -inkey /certs/key.pem -in /certs/cert.pem -password pass:${certPassword}"
+    # Get the full path to the folder containing the certificate
+    $certFolderPath = (Get-Item -Path "./certs").FullName
+
+    # Set the cert folder path as an environment variable
+    $env:DEVCERTS_PATH = $certFolderPath
+
+    # install the certificate
+    if ($IsWindows) {
+        $certPath = Join-Path -Path $certFolderPath -ChildPath "cert.pfx"
+        Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
+    }
+    elseif ($IsMacOS) {
+        security import ./certs/cert.pfx -k ~/Library/Keychains/login.keychain-db -P $certPassword -A
+    }
+    elseif ($IsLinux) {
+        Write-Host "NOTE: A self-signed certificate has been created for you. You will need to install it manually. (You can trust it when you first browse to one of the pages)."
+    }
 }
-elseif ($IsLinux -or $IsMacOS) {
-    $env:DEVCERTS_PATH = "${env:HOME}/.aspnet/https"
-}
-
-$certPath = Join-Path -Path $env:DEVCERTS_PATH -ChildPath "aspnetapp.pfx"
-
-dotnet dev-certs https -ep $certPath -p $certPassword
-dotnet dev-certs https --trust
-
-if (-not(Test-Path $certPath)) {
-    Write-Error "dotnet dev-certs not found at $certPath"
-    exit -1
-}
-
-# copy the certs into the Blazor folder for use by nginx
-New-Item ./src/WebUI/certs/ -ItemType Directory -Force
-Copy-Item $certPath ./src/WebUI/certs/localhost.pfx
 
 # Spin up your Docker Compose services
 docker-compose up -d

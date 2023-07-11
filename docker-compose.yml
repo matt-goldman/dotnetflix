@@ -22,7 +22,7 @@ services:
       - Fido2Configuration__serverDomain=localhost
       - Fido2Configuration__origins=https://localhost:5001
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
     volumes:
       - ${DEVCERTS_PATH}:/https:ro
 
@@ -33,7 +33,7 @@ services:
       - '5002:5002'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
       - Authority=https://identityserver:5001
       - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
       - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
@@ -47,7 +47,7 @@ services:
       - '5003:5003'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
       - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
     volumes:
       - ${DEVCERTS_PATH}:/https:ro
@@ -59,7 +59,7 @@ services:
       - '5004:5004'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
       - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
     volumes:
       - ${DEVCERTS_PATH}:/https:ro
@@ -71,7 +71,7 @@ services:
       - '5005:5005'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
       - Authority=https://identityserver:5001
       - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
       - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
