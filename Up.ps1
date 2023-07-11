@@ -18,7 +18,12 @@ if (-not(Test-Path "./.env")) {
 
     Move-Item ./v3.ext ./certs/v3.ext
 
-    docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c "apt-get update && apt-get install -y openssl && openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost' -extensions v3_req -config /certs/v3.ext && openssl pkcs12 -export -out /certs/cert.pfx -inkey /certs/key.pem -in /certs/cert.pem -password pass:${certPassword}"
+    $dockerCommand = "apt-get update && "`
+    + "apt-get install -y openssl && "`
+    + "openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost' -extensions v3_req -config /certs/v3.ext && "`
+    + "openssl pkcs12 -export -out /certs/cert.pfx -inkey /certs/key.pem -in /certs/cert.pem -password pass:${certPassword}"
+
+    docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c $dockerCommand
     # Get the full path to the folder containing the certificate
     $certFolderPath = (Get-Item -Path "./certs").FullName
 
