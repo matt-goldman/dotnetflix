@@ -11,7 +11,7 @@ RUN openssl pkcs12 -in /certs/cert.pfx -clcerts -nokeys -out /certs/localhost.cr
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 
-COPY ./src/WebUI/WebUI/ ./Web/
+COPY ./src/WebUI/ ./Web/
 COPY ./src/Shared/ ./Shared/
 
 WORKDIR /src/Web
