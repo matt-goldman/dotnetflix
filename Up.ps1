@@ -10,7 +10,7 @@ if (-not(Test-Path "./.env")) {
     # Write the passwords to the .env file
     "SA_PASSWORD=$saPassword" | Out-File -FilePath .env -Append
     "CERT_PASSWORD=$certPassword" | Out-File -FilePath .env -Append
-
+    
     # Create the certs
     if (-not(Test-Path "./certs")) {
         New-Item ./certs/ -type Directory
@@ -24,6 +24,9 @@ if (-not(Test-Path "./.env")) {
     + "openssl pkcs12 -export -out /certs/cert.pfx -inkey /certs/key.pem -in /certs/cert.pem -password pass:${certPassword}"
 
     docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c $dockerCommand    
+
+    # Get the full path to the folder containing the cert0ificate
+    $certFolderPath = (Get-Item -Path "./certs").FullName
 
     # install the certificate
     if ($IsWindows) {
