@@ -11,14 +11,18 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["src/DotNetFlix.VideoService/DotNetFlix.VideoService.csproj", "src/DotNetFlix.VideoService/"]
-RUN dotnet restore "src/DotNetFlix.VideoService/DotNetFlix.VideoService.csproj"
-COPY . .
-WORKDIR "/src/src/DotNetFlix.VideoService"
-RUN dotnet build "DotNetFlix.VideoService.csproj" -c Release -o /app/build
+COPY ./src/DotNetFlix.VideoService/*.csproj ./Videos/
+COPY ./src/Shared/*.csproj ./Shared/
+
+RUN dotnet restore ./Videos/DotNetFlix.VideoService.csproj
+
+COPY ./src/DotNetFlix.VideoService/ ./Videos/
+COPY ./src/Shared/ ./Shared/
+
+RUN dotnet build ./Videos/DotNetFlix.VideoService.csproj -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "DotNetFlix.VideoService.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish ./Videos/DotNetFlix.VideoService.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

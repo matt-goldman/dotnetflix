@@ -16,19 +16,14 @@ if (-not(Test-Path "./.env")) {
         New-Item ./certs/ -type Directory
     }
 
-    Move-Item ./v3.ext ./certs/v3.ext
+    Copy-Item ./v3.ext ./certs/v3.ext
 
     $dockerCommand = "apt-get update && "`
     + "apt-get install -y openssl && "`
     + "openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost' -extensions v3_req -config /certs/v3.ext && "`
     + "openssl pkcs12 -export -out /certs/cert.pfx -inkey /certs/key.pem -in /certs/cert.pem -password pass:${certPassword}"
 
-    docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c $dockerCommand
-    # Get the full path to the folder containing the certificate
-    $certFolderPath = (Get-Item -Path "./certs").FullName
-
-    # Set the cert folder path as an environment variable
-    $env:DEVCERTS_PATH = $certFolderPath
+    docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c $dockerCommand    
 
     # install the certificate
     if ($IsWindows) {
@@ -42,6 +37,12 @@ if (-not(Test-Path "./.env")) {
         Write-Host "NOTE: A self-signed certificate has been created for you. You will need to install it manually. (You can trust it when you first browse to one of the pages)."
     }
 }
+
+# Get the full path to the folder containing the certificate
+$certFolderPath = (Get-Item -Path "./certs").FullName
+
+# Set the cert folder path as an environment variable
+$env:DEVCERTS_PATH = $certFolderPath
 
 # Spin up your Docker Compose services
 docker-compose up -d

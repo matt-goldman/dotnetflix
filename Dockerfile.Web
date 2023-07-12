@@ -4,13 +4,18 @@ ARG CERT_PASSWORD
 
 RUN apt-get update && apt-get install -y openssl
 
-COPY localhost.pfx .
-RUN openssl pkcs12 -in /certs/localhost.pfx -clcerts -nokeys -out /certs/localhost.crt -password pass:${CERT_PASSWORD} && \
-    openssl pkcs12 -in /certs/localhost.pfx -nocerts -nodes -out /certs/localhost.key -password pass:${CERT_PASSWORD}
+RUN openssl pkcs12 -in /certs/cert.pfx -clcerts -nokeys -out /certs/localhost.crt -password pass:${CERT_PASSWORD} && \
+    openssl pkcs12 -in /certs/cert.pfx -nocerts -nodes -out /certs/localhost.key -password pass:${CERT_PASSWORD}
 
 # Stage x: Build the Blazor WASM app
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
-COPY . .
+WORKDIR /src
+
+COPY ./src/WebUI/WebUI/ ./Web/
+COPY ./src/Shared/ ./Shared/
+
+WORKDIR /src/Web
+
 RUN dotnet restore
 RUN dotnet publish -c Release -o /app
 

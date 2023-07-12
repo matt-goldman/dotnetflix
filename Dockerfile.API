@@ -11,15 +11,18 @@ USER appuser
 
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["DotNetFlix.API.csproj", "./"]
+COPY ./src/API/*.csproj ./API/
+COPY ./src/Shared/*.csproj ./Shared/
 
-RUN dotnet restore "DotNetFlix.API.csproj"
-COPY . .
+RUN dotnet restore ./API/DotNetFlix.API.csproj
 
-RUN dotnet build "DotNetFlix.API.csproj" -c Release -o /app/build
+COPY ./src/API/ ./API/
+COPY ./src/Shared/ ./Shared/
+
+RUN dotnet build ./API/DotNetFlix.API.csproj -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "DotNetFlix.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish ./API/DotNetFlix.API.csproj -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app
