@@ -24,4 +24,9 @@ RUN dotnet publish "DotNetFlix.SubscriptionService.csproj" -c Release -o /app/pu
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY ./certs/localhost.crt /usr/local/share/ca-certificates/cert.crt
+COPY ./certs/cert.pfx ./https/cert.pfx
+
+RUN update-ca-certificates
+
 ENTRYPOINT ["dotnet", "DotNetFlix.SubscriptionService.dll"]

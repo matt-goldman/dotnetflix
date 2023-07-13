@@ -14,3 +14,10 @@ Dotnetflix is a demo solution for my talk **Beyond Passwords: The future (and pr
 | TV app                          | Device code grant            |
 | Laptop or desktop: registration | Username and password        |
 | Laptop, desktop, or phone: login | WebAuthN |
+
+
+# docker
+
+* needs powershell core
+* run up
+* Accept cert prompt

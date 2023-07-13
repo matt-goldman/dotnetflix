@@ -24,6 +24,11 @@ RUN dotnet publish "DotNetFlix.Identity.csproj" -c Release -o /app/publish /p:Us
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY ./certs/localhost.crt /usr/local/share/ca-certificates/cert.crt
+COPY ./certs/cert.pfx ./https/cert.pfx
+
+RUN update-ca-certificates
+
 ENTRYPOINT ["dotnet", "DotNetFlix.Identity.dll"]
 
 # Running the migration during the container build

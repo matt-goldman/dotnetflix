@@ -22,9 +22,7 @@ services:
       - Fido2Configuration__serverDomain=localhost
       - Fido2Configuration__origins=https://localhost:5001
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
-    volumes:
-      - ${DEVCERTS_PATH}:/https:ro
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
 
   api:
     image: dotnetflix-api
@@ -35,12 +33,10 @@ services:
       - '5002:5002'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
       - Authority=https://identityserver:5001
       - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
       - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
-    volumes:
-      - ${DEVCERTS_PATH}:/https:ro
 
   videos:
     image: dotnetflix-videos
@@ -51,10 +47,8 @@ services:
       - '5003:5003'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
       - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
-    volumes:
-      - ${DEVCERTS_PATH}:/https:ro
   
   subscriptions:
     image: dotnetflix-subscriptions
@@ -63,10 +57,8 @@ services:
       - '5004:5004'
     environment:
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/cert.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
       - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
-    volumes:
-      - ${DEVCERTS_PATH}:/https:ro
 
   web:
     image: dotnetflix-web

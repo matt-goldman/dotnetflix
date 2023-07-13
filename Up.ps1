@@ -22,8 +22,7 @@ if (-not(Test-Path "./.env")) {
     + "apt-get install -y openssl && "`
     + "openssl req -x509 -newkey rsa:4096 -keyout /certs/key.pem -out /certs/cert.pem -days 365 -nodes -subj '/CN=localhost' -extensions v3_req -config /certs/v3.ext && "`
     + "openssl pkcs12 -export -out /certs/cert.pfx -inkey /certs/key.pem -in /certs/cert.pem -password pass:${certPassword} && "`
-    + "openssl pkcs12 -in /certs/cert.pfx -clcerts -nokeys -out /certs/localhost.crt -password pass:${certPassword}"# && "`
-    #+ "openssl pkcs12 -in /certs/cert.pfx -nocerts -nodes -out /certs/localhost.key -password pass:${certPassword}"
+    + "openssl pkcs12 -in /certs/cert.pfx -clcerts -nokeys -out /certs/localhost.crt -password pass:${certPassword}"
 
     docker run --rm -it -v ${PWD}/certs:/certs debian:latest bash -c $dockerCommand
 
@@ -42,6 +41,8 @@ if (-not(Test-Path "./.env")) {
     if ($IsWindows) {
         $certPath = Join-Path -Path $certFolderPath -ChildPath "cert.pfx"
         Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
+        
+        Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\CurrentUser\Root -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
     }
     elseif ($IsMacOS) {
         security import ./certs/cert.pfx -k ~/Library/Keychains/login.keychain-db -P $certPassword -A
@@ -49,6 +50,19 @@ if (-not(Test-Path "./.env")) {
     elseif ($IsLinux) {
         Write-Host "NOTE: A self-signed certificate has been created for you. You will need to install it manually. (You can trust it when you first browse to one of the pages)."
     }
+
+    # copy the certs to the Identity and Subscription project folders
+    if (-not(Test-Path "./src/Identity/certs")) {
+        New-Item ./src/Identity/certs/ -type Directory
+    }
+
+    Copy-Item ./certs/* ./src/Identity/certs
+
+    if (-not(Test-Path "./src/DotNetFlix.SubscriptionService/certs")) {
+        New-Item ./src/DotNetFlix.SubscriptionService/certs/ -type Directory
+    }
+
+    Copy-Item ./certs/* ./src/DotNetFlix.SubscriptionService/certs
 }
 
 # Spin up your Docker Compose services
