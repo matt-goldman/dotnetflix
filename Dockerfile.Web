@@ -1,17 +1,5 @@
 # Stage x: Convert .pfx to .crt and .key
 FROM debian:latest AS convert
-ARG CERT_PASSWORD
-
-# Add a command to list the contents of the volume
-RUN ls -l /https
-
-# Check for the presence of the cert.pfx file
-RUN test -f /https/cert.pfx || { echo "ERROR: cert.pfx file not found."; exit 1; }
-
-RUN apt-get update && apt-get install -y openssl
-
-RUN openssl pkcs12 -in /https/cert.pfx -clcerts -nokeys -out /https/localhost.crt -password pass:${CERT_PASSWORD} && \
-    openssl pkcs12 -in /https/cert.pfx -nocerts -nodes -out /https/localhost.key -password pass:${CERT_PASSWORD}
 
 # Stage x: Build the Blazor WASM app
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
@@ -28,6 +16,6 @@ RUN dotnet publish -c Release -o /app
 # Stage x: Use Nginx to serve the app
 FROM nginx:latest AS final
 COPY --from=build /app/wwwroot /usr/share/nginx/html
-COPY --from=build /https/localhost.crt /etc/nginx/
-COPY --from=build /https/localhost.key /etc/nginx/
 COPY ./src/WebUI/default.conf /etc/nginx/conf.d/
+COPY ./certs/localhost.crt /etc/nginx/localhost.crt
+COPY ./certs/localhost.key /etc/nginx/localhost.key
