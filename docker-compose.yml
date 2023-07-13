@@ -77,8 +77,6 @@ services:
       - '5005:443'
       - '8080:80'
     environment:
-      - Authority=https://identityserver:5001
-      - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
-      - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
+      - ASPNETCORE_ENVIRONMENT=Docker
     volumes:
       - ${DEVCERTS_PATH}:/https:ro
