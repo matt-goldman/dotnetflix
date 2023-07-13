@@ -28,6 +28,9 @@ if (-not(Test-Path "./.env")) {
     # Get the full path to the folder containing the cert0ificate
     $certFolderPath = (Get-Item -Path "./certs").FullName
 
+    # Write the cert folder path to the .env file
+    "DEVCERTS_PATH=$certFolderPath" | Out-File -FilePath .env -Append
+
     # install the certificate
     if ($IsWindows) {
         $certPath = Join-Path -Path $certFolderPath -ChildPath "cert.pfx"
@@ -40,12 +43,6 @@ if (-not(Test-Path "./.env")) {
         Write-Host "NOTE: A self-signed certificate has been created for you. You will need to install it manually. (You can trust it when you first browse to one of the pages)."
     }
 }
-
-# Get the full path to the folder containing the certificate
-$certFolderPath = (Get-Item -Path "./certs").FullName
-
-# Set the cert folder path as an environment variable
-$env:DEVCERTS_PATH = $certFolderPath
 
 # Spin up your Docker Compose services
 docker-compose up -d

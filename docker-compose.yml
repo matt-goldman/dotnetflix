@@ -74,7 +74,8 @@ services:
       context: .
       dockerfile: Dockerfile.Web
     ports:
-      - '5005:5005'
+      - '5005:443'
+      - '8080:80'
     environment:
       - Authority=https://identityserver:5001
       - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
