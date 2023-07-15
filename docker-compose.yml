@@ -32,6 +32,7 @@ services:
     ports:
       - '5002:5002'
     environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
       - Authority=https://identityserver:5001

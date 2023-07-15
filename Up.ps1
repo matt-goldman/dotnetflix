@@ -45,7 +45,11 @@ if (-not(Test-Path "./.env")) {
         $certPath = Join-Path -Path $certFolderPath -ChildPath "cert.pfx"
         Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
         
-        Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
+        # Run the Admin-InstallCerts.ps1 script as an administrator
+        # Requires elevated privileges to install machine root certificates
+        $scriptPath = (Get-Item -Path "./Admin-InstallCerts.ps1").FullName
+
+        Start-Process -FilePath "powershell" -ArgumentList "-File $scriptPath -certPath $certPath -certPassword $certPassword" -Verb RunAs
     }
     elseif ($IsMacOS) {
         security import ./certs/cert.pfx -k ~/Library/Keychains/login.keychain-db -P $certPassword -A
@@ -73,7 +77,7 @@ docker-compose up -d
 
 # Give some time for your services to fully start up.
 # Depending on your services, you might need to increase this time.
-Start-Sleep -s 30
+# Start-Sleep -s 30
 
 # Run your Postman collection
 # newman run ./Dotnetflix.postman_collection.json -e ./Dotnetflix-docker-environment.json
