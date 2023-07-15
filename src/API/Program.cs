@@ -20,6 +20,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Authority = authority;
         options.Audience = "DotnetflixApi";
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
+
+        // IdentityServer responds based on the host header. In the browser this is
+        // localhost, but inside the dcker network its address is identityserver.
+        if(builder.Environment.IsEnvironment("Docker"))
+        {
+            options.TokenValidationParameters.ValidateIssuer = false;
+        }
+
     });
 
 builder.Services.AddScoped<SubscriptionsService>();

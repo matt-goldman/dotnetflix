@@ -3,6 +3,8 @@
 if (-not(Test-Path "./.env")) {
     # no env file found, so create one
 
+    $apiKey = Read-Host -Prompt "Enter your YouTube API Key"
+
     # Generate a random SA password
     $saPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
     $certPassword = -Join("ABCDEFGHIJKLMNOPQRSTUVWXYXabcdefghijklmnopqrstuvwxyz&@#$%1234".tochararray() | Get-Random -Count 10 | % {[char]$_})
@@ -10,6 +12,7 @@ if (-not(Test-Path "./.env")) {
     # Write the passwords to the .env file
     "SA_PASSWORD=$saPassword" | Out-File -FilePath .env -Append
     "CERT_PASSWORD=$certPassword" | Out-File -FilePath .env -Append
+    "YOUTUBE_API_KEY=$apiKey" | Out-File -FilePath .env -Append
     
     # Create the certs
     if (-not(Test-Path "./certs")) {
@@ -42,7 +45,7 @@ if (-not(Test-Path "./.env")) {
         $certPath = Join-Path -Path $certFolderPath -ChildPath "cert.pfx"
         Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\CurrentUser\My -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
         
-        Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\CurrentUser\Root -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
+        Import-PfxCertificate -FilePath $certPath -CertStoreLocation Cert:\LocalMachine\Root -Password (ConvertTo-SecureString -String $certPassword -AsPlainText -Force)
     }
     elseif ($IsMacOS) {
         security import ./certs/cert.pfx -k ~/Library/Keychains/login.keychain-db -P $certPassword -A

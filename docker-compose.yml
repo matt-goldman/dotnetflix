@@ -46,9 +46,11 @@ services:
     ports:
       - '5003:5003'
     environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
       - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
+      - YouTube__ApiKey=${YOUTUBE_API_KEY}
   
   subscriptions:
     image: dotnetflix-subscriptions
@@ -56,6 +58,7 @@ services:
     ports:
       - '5004:5004'
     environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
       - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
