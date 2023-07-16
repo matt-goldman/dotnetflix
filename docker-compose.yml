@@ -19,8 +19,7 @@ services:
       - db
     environment:
       - ConnectionStrings__DefaultConnection=Server=db;Database=DotnetflixDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;Encrypt=true
-      - Fido2Configuration__serverDomain=localhost
-      - Fido2Configuration__origins=https://localhost:5001
+      - ASPNETCORE_ENVIRONMENT=Docker
       - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
       - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
 
