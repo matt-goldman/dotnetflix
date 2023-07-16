@@ -21,6 +21,11 @@ Although I can't guarantee I will keep this running. It's on a low cost Azure ti
 
 You can also run the demo locally using either the dotnet cli or docker. You will need a Google API key for YouTube.
 
+**Note:** The migrations were all created using MSSQL LocalDB. If you're not running on Windows, you'll need to install Azure SQL Edge, and update the connection string in the Identity project.
+
+TODO:
+[] Move this to PostgreSQL
+
 ## .NET CLI
 
 1. Add a user secrets file to the Videos project (`src/DotNetFlix.VideoService`)
