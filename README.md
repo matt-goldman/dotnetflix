@@ -71,4 +71,4 @@ There is a postman collection and environment you can import to test the various
 
 # The code
 
-Feel free to poke around the code and see how things work. The interesting parts are [highlighted in the wiki](/wiki).
+Feel free to poke around the code and see how things work. The interesting parts are [highlighted in the wiki](https://github.com/matt-goldman/dotnetflix/wiki).
