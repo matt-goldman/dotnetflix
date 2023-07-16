@@ -1,0 +1,21 @@
+# Stage x: Convert .pfx to .crt and .key
+FROM debian:latest AS convert
+
+# Stage x: Build the Blazor WASM app
+FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+WORKDIR /src
+
+COPY ./src/WebUI/ ./Web/
+COPY ./src/Shared/ ./Shared/
+
+WORKDIR /src/Web
+
+RUN dotnet restore
+RUN dotnet publish -c Release -o /app
+
+# Stage x: Use Nginx to serve the app
+FROM nginx:latest AS final
+COPY --from=build /app/wwwroot /usr/share/nginx/html
+COPY ./src/WebUI/default.conf /etc/nginx/conf.d/
+COPY ./certs/localhost.crt /etc/nginx/localhost.crt
+COPY ./certs/localhost.key /etc/nginx/localhost.key

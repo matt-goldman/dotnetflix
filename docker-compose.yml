@@ -1,0 +1,78 @@
+version: '3.4'
+
+services:
+
+  db:
+    image: mcr.microsoft.com/azure-sql-edge
+    environment:
+      MSSQL_SA_PASSWORD: ${SA_PASSWORD}
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433"
+
+  identityserver:
+    image: dotnetflix-identity
+    build: ./src/Identity
+    ports:
+      - '5001:5001'
+    depends_on:
+      - db
+    environment:
+      - ConnectionStrings__DefaultConnection=Server=db;Database=DotnetflixDB;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=true;Encrypt=true
+      - Fido2Configuration__serverDomain=localhost
+      - Fido2Configuration__origins=https://localhost:5001
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
+
+  api:
+    image: dotnetflix-api
+    build:
+      context: .
+      dockerfile: Dockerfile.API
+    ports:
+      - '5002:5002'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
+      - Authority=https://identityserver:5001
+      - ServiceConfig__VideosClient__BaseUrl=https://videos:5003
+      - ServiceConfig__SubscriptionsClient__BaseUrl=https://subscriptions:5004
+
+  videos:
+    image: dotnetflix-videos
+    build:
+      context: .
+      dockerfile: Dockerfile.Videos
+    ports:
+      - '5003:5003'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
+      - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
+      - YouTube__ApiKey=${YOUTUBE_API_KEY}
+  
+  subscriptions:
+    image: dotnetflix-subscriptions
+    build: ./src/DotNetFlix.SubscriptionService
+    ports:
+      - '5004:5004'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+      - ASPNETCORE_Kestrel__Certificates__Default__Password=${CERT_PASSWORD}
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/app/https/cert.pfx
+      - Authentication__Schemes__Bearer__Authority=https://identityserver:5001
+
+  web:
+    image: dotnetflix-web
+    build:
+      context: .
+      dockerfile: Dockerfile.Web
+    ports:
+      - '5005:443'
+      - '8080:80'
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Docker
+    volumes:
+      - ${DEVCERTS_PATH}:/https:ro

@@ -20,6 +20,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         options.Authority = authority;
         options.Audience = "DotnetflixApi";
         options.TokenValidationParameters.ValidTypes = new[] { "at+jwt" };
+
+        // IdentityServer responds based on the host header. In the browser this is
+        // localhost, but inside the dcker network its address is identityserver.
+        if(builder.Environment.IsEnvironment("Docker"))
+        {
+            options.TokenValidationParameters.ValidateIssuer = false;
+        }
+
     });
 
 builder.Services.AddScoped<SubscriptionsService>();
@@ -45,7 +53,7 @@ builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
     {
-        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:7009", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net");
+        policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:5005", "https://ambitious-meadow-0ec297a00.3.azurestaticapps.net");
     });
 });
 
