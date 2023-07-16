@@ -24,7 +24,7 @@ You can also run the demo locally using either the dotnet cli or docker. You wil
 **Note:** The migrations were all created using MSSQL LocalDB. If you're not running on Windows, you'll need to install Azure SQL Edge, and update the connection string in the Identity project.
 
 TODO:
-[] Move this to PostgreSQL
+- [ ] Move this to PostgreSQL
 
 ## .NET CLI
 
