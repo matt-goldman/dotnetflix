@@ -16,7 +16,7 @@
 		},
 		{
 			"key": "subscriptions",
-			"value": "https://localhost:7234",
+			"value": "https://localhost:5004",
 			"type": "default",
 			"enabled": true
 		},
