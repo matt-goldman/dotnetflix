@@ -71,4 +71,4 @@ There is a postman collection and environment you can import to test the various
 
 # The code
 
-Feel free to poke around. I'll add a wiki soon highlighting the most interesting parts of the code.
+Feel free to poke around the code and see how things work. The interesting parts are [highlighted in the wiki](/wiki).
