@@ -1,5 +1,7 @@
 # dotnetflix
 
+[<img src="https://i.ytimg.com/vi/K1t73xArqs0/maxresdefault.jpg" width="50%">](https://www.youtube.com/watch?v=K1t73xArqs0 "Beyond Passwords: The future (and present) of authentication")
+
 **NOTE:** There is a YouTube channel called DotNetFlix (see https://dotnetflix.com) - this is not affiliated with them, I just had the same idea for this cool name for my demo (albeit nearly a decade later).
 
 Dotnetflix is a demo solution for my talk **Beyond Passwords: The future (and present) of authentication**. It shows how you can use existing, established familiar technologies to achieve passwordless authentication in your solution. It also highlights which authentication options are suited to different scenarios.
