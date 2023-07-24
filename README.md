@@ -63,7 +63,7 @@ You could edit the solution configuration to launch [multiple startup projects](
 
 # Running the .NET MAUI app
 
-The .NET MAUI app will run on macOS, Windows, Linux or iOS. Depending on which of these you are running it on, you will need to update the base URL and authority URL. If on Windows or macOS, you can use localhost with the right ports. If you're running it on iOS or Android you'll need to use a tunnel like ngrok. These instructions apply to .NET cli or docker.
+The .NET MAUI app will run on macOS, Windows, Android or iOS. Depending on which of these you are running it on, you will need to update the base URL and authority URL. If on Windows or macOS, you can use localhost with the right ports. If you're running it on iOS or Android you'll need to use a tunnel like ngrok. These instructions apply to .NET cli or docker.
 
 # Postman
 
